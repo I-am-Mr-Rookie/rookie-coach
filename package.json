@@ -10,6 +10,7 @@
     "typecheck": "tsc -p packages/core && tsc -p packages/codeforces"
   },
   "devDependencies": {
+    "fake-indexeddb": "6.2.5",
     "typescript": "5.9.3",
     "vitest": "4.0.16"
   }

@@ -87,7 +87,7 @@ Acceptance: Add a loadable Manifest V3 extension skeleton with a minimal popup/o
 Out of scope: No polished design system, no multi-platform selector, no login service.
 
 ## RC-008 Local evidence storage
-Status: READY
+Status: DONE
 Priority: P08
 Timebox: one run, <= 30 min
 Depends on: RC-007
@@ -99,7 +99,7 @@ Acceptance: Create a local storage abstraction suitable for the extension; prefe
 Out of scope: No remote sync, no hosted DB, no multi-user server.
 
 ## RC-009 Source-evidence prototype
-Status: WAITING
+Status: READY
 Priority: P09
 Timebox: one run, <= 30 min
 Depends on: RC-008

@@ -214,3 +214,35 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the planning update; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-008
+Status: DONE
+Objective: Store version 1 submissions locally by platform, namespace, handle, and submission ID.
+
+Acceptance checks:
+- IndexedDB and deterministic in-memory stores upsert by the full account/submission key.
+- Two handles and namespaces cannot overwrite each other's records.
+- Source status, source text, and provenance survive writes and reads.
+
+Changed:
+- `packages/core/src/storage.ts` — small evidence-store interface, browser IndexedDB store with a compound key and account index, and an in-memory store.
+- `packages/core/src/storage.test.ts` — synthetic account isolation, replacement, source/provenance round-trip, copy isolation, and fake IndexedDB reopening checks.
+- `packages/core/src/index.ts`, `package.json`, `package-lock.json` — export storage and pin the test-only IndexedDB fake.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — record completion and activate RC-009.
+
+Verified:
+- `npm run typecheck` — PASS, both packages.
+- `npm test` — PASS, seven tests (two storage, five Codeforces).
+- `npm run build:extension` — PASS, MV3 popup validation.
+- `git diff --check` — PASS.
+
+Assumptions / decisions:
+- Account identity follows contract v1 `(platform, namespace, handle)`; a handle change remains a separate account without silent migration.
+- Upsert replaces one submission record with the supplied record. RC-010 must deliberately merge source evidence when importing metadata again.
+- The extension has no database access wired into its popup yet; RC-010 owns that connection. No real student data was used.
+
+Remaining / next:
+- RC-009 — source-evidence prototype using a sanitized saved-page or user-export fixture under the RC-002 access findings.
+
+Commit:
+- This entry is committed with the RC-008 checkpoint; use the Git commit containing this entry as its hash.

@@ -30,3 +30,5 @@ export interface Submission extends StudentAccount {
   provenance: string;
   capturedAt: string;
 }
+
+export { IndexedDbEvidenceStore, MemoryEvidenceStore, type EvidenceStore } from "./storage.js";
