@@ -21,3 +21,7 @@ The collected history is intended to power a coaching system that can eventually
 The product is still in discovery. For the first local milestone, the [run system](docs/project-overview.html#run-system) uses Codeforces and a deterministic evidence report as reversible working defaults. Permanent architecture, license, hosted storage, and monetization remain undecided.
 
 See the [detailed project overview and run system](docs/project-overview.html), [project state](docs/PROJECT_STATE.md), and [execution backlog](docs/BACKLOG.md) for the next bounded run. [`docs/HANDOFF.md`](docs/HANDOFF.md) preserves the early context; [`docs/OPEN_QUESTIONS.md`](docs/OPEN_QUESTIONS.md) records deferred product questions.
+
+## Local extension shell
+
+Run `npm ci && npm run build:extension`, then open `chrome://extensions`, enable Developer mode, and choose **Load unpacked** with the `extension/` directory. The popup saves a Codeforces handle locally. Its Start import button currently saves the handle and reports that no history was collected; the actual import is scheduled for RC-010.

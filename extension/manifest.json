@@ -1,0 +1,7 @@
+{
+  "manifest_version": 3,
+  "name": "Rookie Coach",
+  "version": "0.0.1",
+  "description": "Start an import of your own Codeforces history.",
+  "action": { "default_popup": "popup.html" }
+}

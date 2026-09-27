@@ -157,3 +157,30 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-006 checkpoint; use the Git commit containing this entry as its hash.
+
+## Run 2026-09-27 / RC-007
+Status: DONE
+Objective: Add a user-controlled Chrome MV3 extension shell for one Codeforces handle.
+
+Changed:
+- `extension/` — zero-permission manifest, popup with own-history explanation and Start import action, TypeScript build output ignored by Git.
+- `scripts/check-extension.mjs`, `package.json` — validate the manifest, built popup script, handle restoration, and explicit action with a synthetic handle.
+- `README.md` — local build and Load unpacked instructions.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — record completion and activate RC-008.
+
+Verified:
+- `npm run build:extension` — PASS: TypeScript build, MV3 manifest and popup action checks.
+- `npm run typecheck` — PASS for core and Codeforces packages.
+- `npm test` — PASS, five existing tests.
+- `git diff --check` — PASS.
+- Chrome manual load — not run; no Chrome/Chromium executable in this environment. The generated script and manifest paths were checked.
+
+Assumptions / decisions:
+- The shell uses extension-origin `localStorage` for only the handle and requests no extension permissions. RC-008 will add account-isolated evidence storage.
+- Start import saves configuration and explicitly states that no history was collected; the end-to-end import belongs to RC-010.
+
+Remaining / next:
+- RC-008 — local, account-isolated evidence storage with a deterministic fake.
+
+Commit:
+- This entry is committed with the RC-007 checkpoint; use the Git commit containing this entry as its hash.

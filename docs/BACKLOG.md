@@ -75,7 +75,7 @@ Acceptance: Implement pagination/backfill around the verified official API behav
 Out of scope: No source capture, no arbitrary-handle mass collection, no background daemon.
 
 ## RC-007 Chrome MV3 extension shell
-Status: READY
+Status: DONE
 Priority: P07
 Timebox: one run, <= 30 min
 Depends on: RC-006
@@ -87,7 +87,7 @@ Acceptance: Add a loadable Manifest V3 extension skeleton with a minimal popup/o
 Out of scope: No polished design system, no multi-platform selector, no login service.
 
 ## RC-008 Local evidence storage
-Status: WAITING
+Status: READY
 Priority: P08
 Timebox: one run, <= 30 min
 Depends on: RC-007

@@ -5,6 +5,7 @@
   "engines": { "node": ">=22" },
   "workspaces": ["packages/*"],
   "scripts": {
+    "build:extension": "tsc -p extension && node scripts/check-extension.mjs",
     "test": "vitest run",
     "typecheck": "tsc -p packages/core && tsc -p packages/codeforces"
   },
