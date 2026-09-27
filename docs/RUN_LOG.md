@@ -643,13 +643,43 @@ Verified:
 - `npm ci --ignore-scripts --no-audit --no-fund` — PASS.
 - `npm run build:extension` — PASS, including existing synthetic IndexedDB popup/report check.
 - Unpacked extension enabled in the owner's local Chrome — PASS, confirmed by the Chrome extensions page.
-- Computer-use URL-safety verification stopped the agent's browser action before import; this does not show a product defect. The owner then used the popup and saved a private account export outside the repository. Its 10 submission IDs, verdicts and language labels matched the API page; all 10 sources were `not-collected`. The account key was a full Codeforces profile URL, whose final handle segment matched the page's sole author handle. The popup accepted the URL rather than requiring a bare handle; this is an input-validation/labeling issue, not a foreign-account import.
+- Computer-use URL-safety verification stopped the agent's browser action before import; this does not show a product defect. The owner then used the popup and saved a private account export outside the repository. Its 10 submission IDs, verdicts and language labels matched the API page; all 10 sources were `not-collected`. The intentionally entered account key was a full Codeforces profile URL, whose final handle segment matched the page's sole author handle. Owner clarification in the subsequent bounded RC-014 run established that this URL-shaped local key was acceptable, not a validation defect.
 - The owner reported the import and repeat worked; the final export still has 10 records. The report UI and repeat sequence were not independently observed. Live account isolation and normal-access source check — NOT RUN.
 - Authenticated `includeSources` — NOT TESTED; no keys, cookies or secrets were used.
 
 Remaining / next:
-- Resume RC-014 with bounded bare-handle input validation and synthetic valid/profile-URL tests. Enter the bare handle, reimport the saved private page, remove the URL-keyed local copy through the account controls, then compare the report and verify another account remains isolated. One page cannot establish full-history coverage. Leave unobserved source as `not-collected`.
+- Superseded by the owner correction in the subsequent bounded RC-014 run: no bare-handle validation repair, reimport or deletion is required. Compare the existing report and, where possible, verify another already-present local account remains isolated. One page cannot establish full-history coverage. Leave unobserved source as `not-collected`.
 - RC-021 remains WAITING; pilot readiness is not established. No synthetic regression beyond the existing build check was needed because application code did not change.
 
 Commit:
 - This entry is committed with the RC-014 partial checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-014 (new bounded verification)
+Status: PARTIAL_CHECKPOINT
+Objective: Recheck the authorized local export and correct the prior RC-014 URL-key interpretation without changing extension behavior.
+Started UTC: 2026-09-27T14:34:40Z.
+
+Acceptance checks (written before edits):
+1. Independently compare non-identifying counts and per-record ID, verdict and language equality between the saved official page and local export; check author alignment and source-status aggregates.
+2. Remove the false bare-handle repair prerequisite while preserving unobserved browser, source and authenticated-response gates.
+3. Inspect the public diff for private data and pass `git diff --check` before committing.
+
+Changed:
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/research/live-import-check.md` — record the intentionally accepted URL-shaped local account key, verified metadata match and remaining live checks.
+- This run log corrects the earlier run's input-validation interpretation; no application code, private records or identifiers were added.
+
+Verified:
+- `git status --short` — clean before editing; `git fetch origin --prune` — local `main` matched `origin/main` at `35a4a45532b8376988261cf78c55ec8b0585c0b2`.
+- Local-only PowerShell `Get-Content -Raw | ConvertFrom-Json` aggregate comparison — official status `OK`; 10 distinct page IDs and 10 distinct exported IDs; all 10 IDs, verdicts and languages matched per record. The URL's final segment matched the page's sole author and all exported records used that local account key. All 10 exported source statuses were `not-collected`; no source-text field appeared in the metadata page. No second API page or network import was requested.
+- The owner reports the explicit import and repeat worked. The saved export contains 10 records, but this run did not independently observe the repeat sequence or report UI.
+- `git diff --check` — PASS. Public diff review found no private handle, submission ID, record, source, credential or screenshot.
+
+Assumptions / decisions:
+- The owner intentionally used and accepts the full profile URL as the exact-text local account key. Different future input strings may create distinct local buckets; this is not a failed attribution or a mandatory repair.
+- No code changed, so no new synthetic regression was needed. One page does not prove full-history coverage or a coaching diagnosis.
+
+Remaining / next:
+- RC-014 remains open: in the owner's local Chrome, compare the existing report's aggregate counts with the export; if a second local account already exists, check isolation without collecting anyone else's history. Check own-submission source only through normal access; keep unobserved source `not-collected`. Authenticated `includeSources` remains untested. RC-021 remains WAITING.
+
+Commit:
+- This entry is committed with the RC-014 corrected partial checkpoint; use the Git commit containing it as its hash.
