@@ -201,7 +201,7 @@ Fallback / checkpoint: Missing permission or local access means BLOCKED, with a 
 Out of scope: No bulk collection, credentials in the repository, general crawler, enrollment of all five volunteers or automatic outreach.
 
 ## RC-015 Attempt comparison evidence
-Status: READY
+Status: DONE
 Priority: P15
 Timebox: one run, <= 30 min
 Depends on: RC-013
@@ -221,7 +221,7 @@ Fallback / checkpoint: Support one existing source representation only. If a par
 Out of scope: No execution of student code, language-wide static analyzer, LLM, cloud service or live import.
 
 ## RC-016 One conservative recurring-mistake rule
-Status: WAITING
+Status: READY
 Priority: P16
 Timebox: one run, <= 30 min
 Depends on: RC-015
