@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Detailed project overview and handoff for Rookie Coach, an open-source competitive programming coaching platform." />
+  <meta name="description" content="Detailed project overview, autonomous agent runbook, and handoff for Rookie Coach, an open-source competitive programming coaching platform." />
   <title>Rookie Coach — Detailed Project Overview</title>
   <style>
     :root {
@@ -276,6 +276,7 @@
   <nav class="toc" aria-label="Project sections">
     <div class="wrap toc-inner">
       <a href="#executive-summary">Summary</a>
+      <a href="#run-system">Run System</a>
       <a href="#problem">Problem</a>
       <a href="#vision">Vision</a>
       <a href="#users">Users</a>
@@ -287,7 +288,7 @@
       <a href="#roadmap">Roadmap</a>
       <a href="#evaluation">Evaluation</a>
       <a href="#business">Business</a>
-      <a href="#questions">Questions</a>
+      <a href="#questions">Decisions</a>
       <a href="#handoff">Handoff</a>
     </div>
   </nav>
@@ -308,10 +309,468 @@
       <div class="callout good">
         <span class="principle">Working thesis:</span> personalized feedback becomes more useful when it is grounded in the student's actual attempts and recurring mistakes rather than generic topic lists or generic AI advice.
       </div>
+      <div class="callout warn">
+        <span class="principle">Execution model:</span> development is designed around autonomous, repository-driven runs. Each run has a hard 30-minute wall-clock cap and must leave a durable handoff so the project owner does not have to babysit coding agents.
+      </div>
+    </section>
+
+    <section id="run-system" class="card">
+      <h2>2. Autonomous Agent Run System</h2>
+      <p>
+        This section is the operational contract for AI coding agents working on Rookie Coach. It is intentionally explicit enough for a weaker model
+        to follow without a human continuously supervising it. A <strong>run</strong> is one bounded unit of autonomous work that starts by reading the repository state,
+        performs one small task, verifies the result, records what changed, and leaves the repository in a resumable state.
+      </p>
+
+      <div class="callout danger">
+        <span class="principle">Hard limit: no run may exceed 30 minutes of wall-clock time.</span>
+        At minute 27 the agent must stop starting new implementation work and begin checkpointing. At minute 30 it must stop, even if the task is unfinished.
+        An unfinished but well-documented checkpoint is acceptable; an unbounded run is not.
+      </div>
+
+      <div class="callout good">
+        <span class="principle">No-babysitting rule:</span> the human is not the run orchestrator. Do not ask “what should I do next?”, “should I continue?”,
+        “which library do you prefer?”, or similar routine implementation questions. Read the repository, choose the highest-priority safe task that fits the timebox,
+        make reversible low-risk decisions, test them, and document assumptions. Ask the human only for a genuine human-only blocker.
+      </div>
+
+      <h3>2.1 Definition of a run</h3>
+      <p>Every run must satisfy all of the following:</p>
+      <ul>
+        <li>It has <strong>one primary objective</strong>, not a collection of unrelated goals.</li>
+        <li>The objective is small enough to reach a useful checkpoint in at most 30 minutes.</li>
+        <li>It begins by inspecting the current repository state; it never assumes a clean tree or assumes previous agents finished correctly.</li>
+        <li>It defines acceptance criteria before editing code.</li>
+        <li>It performs the smallest useful implementation or investigation that advances the current milestone.</li>
+        <li>It runs targeted verification before claiming success.</li>
+        <li>It updates persistent project state so a fresh model can resume without the previous conversation.</li>
+        <li>It ends in one of the explicit terminal states: <code>DONE</code>, <code>PARTIAL_CHECKPOINT</code>, <code>BLOCKED</code>, or <code>RESEARCH_COMPLETE</code>.</li>
+      </ul>
+
+      <h3>2.2 Mandatory wall-clock budget</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Elapsed time</th><th>Phase</th><th>Required behavior</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>0–2 min</td><td>Boot / recover context</td><td>Inspect git state, read agent contract, state, backlog, recent decisions, and any existing run log. Do not edit yet.</td></tr>
+            <tr><td>2–5 min</td><td>Select / size task</td><td>Choose one READY task. Write 1–3 acceptance checks. If the task cannot fit, split it before starting.</td></tr>
+            <tr><td>5–21 min</td><td>Execute</td><td>Implement or investigate only the selected slice. Prefer focused changes over broad rewrites.</td></tr>
+            <tr><td>21–26 min</td><td>Verify</td><td>Run the smallest relevant tests, lint, typecheck, parser checks, or fixture comparisons. Fix only issues caused by the run.</td></tr>
+            <tr><td>26–27 min</td><td>Decision point</td><td>If verification is still failing, stop feature work. Decide whether the safest outcome is a checkpoint or blocker record.</td></tr>
+            <tr><td>27–30 min</td><td>Checkpoint / handoff</td><td>Update state and run log, inspect the final diff, commit/push when authorized and appropriate, then stop.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="muted">
+        The phase boundaries are intentionally conservative. Finishing early is good. Never use the final three minutes to begin “one more small fix.”
+      </p>
+
+      <h3>2.3 How an agent must measure the timebox</h3>
+      <p>
+        At the first shell/tool step, record a start timestamp. Check elapsed time at each phase transition and after any slow command.
+        In a POSIX shell, a model may use the following pattern if the environment does not provide a run timer:
+      </p>
+      <pre><code>RUN_STARTED_EPOCH=$(date -u +%s)
+# ...work...
+NOW_EPOCH=$(date -u +%s)
+ELAPSED_SECONDS=$((NOW_EPOCH - RUN_STARTED_EPOCH))
+# 1620s = minute 27: stop new work and checkpoint
+# 1800s = minute 30: hard stop</code></pre>
+      <p>
+        A single command must not consume the entire run. Never start watch mode, an interactive development server, or an indefinite process during an autonomous run.
+        Put explicit timeouts around commands that might hang. As a default, cap ordinary commands at 8 minutes; an install/build/test may use up to 12 minutes only when necessary
+        and only if enough run time remains for cleanup and handoff. If a command times out, inspect the failure once; do not blindly rerun it.
+      </p>
+
+      <h3>2.4 Repository control files</h3>
+      <p>
+        The repository should carry its own operational memory. If these files do not exist, the first autonomous setup run should create them.
+        The exact location may be changed later, but their responsibilities must remain distinct.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>File</th><th>Purpose</th><th>Rules</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>AGENTS.md</code></td><td>Stable instructions for coding agents.</td><td>Contains the 30-minute hard limit, no-babysitting policy, repository conventions, verification commands, and prohibited behavior.</td></tr>
+            <tr><td><code>docs/PROJECT_STATE.md</code></td><td>Small current-state snapshot.</td><td>Current milestone, what works now, known breakage, active blocker, next recommended task. Keep it short and current.</td></tr>
+            <tr><td><code>docs/BACKLOG.md</code></td><td>Ordered execution queue.</td><td>Every task has an ID, status, acceptance criteria, dependencies, and a size that fits one run or is explicitly marked for splitting.</td></tr>
+            <tr><td><code>docs/DECISIONS.md</code></td><td>Decision log.</td><td>Record durable choices, alternatives considered, and why. Do not silently turn an unresolved product idea into a permanent requirement.</td></tr>
+            <tr><td><code>docs/RUN_LOG.md</code></td><td>Append-only run history.</td><td>One compact entry per run: task, result, verification, files changed, assumptions, blocker/next step, commit hash when available.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>2.5 Backlog format for weaker models</h3>
+      <p>
+        Tasks must be concrete. “Build Codeforces integration” is too large. “Parse one saved submission fixture into the normalized Submission structure and test it” is run-sized.
+        Use a format like this so a weaker model does not have to infer hidden requirements:
+      </p>
+      <pre><code>### RC-012 — Parse one Codeforces submission fixture
+Status: READY
+Priority: P1
+Timebox: one run, &lt;= 30 min
+Depends on: RC-010
+
+Goal:
+Convert one checked-in HTML/JSON fixture into the normalized Submission shape.
+
+Acceptance:
+- Parser returns the expected submission ID, verdict, language and source text.
+- One deterministic fixture test passes.
+- No network call is required by the test.
+- PROJECT_STATE and RUN_LOG are updated.
+
+Out of scope:
+- Pagination
+- Authentication
+- Historical backfill
+- Other platforms</code></pre>
+
+      <h3>2.6 Task selection algorithm</h3>
+      <p>A fresh model must follow this exact order rather than improvising:</p>
+      <ol>
+        <li>Run <code>git status --short</code>. Preserve existing human or agent changes; never discard them just to get a clean tree.</li>
+        <li>Read <code>AGENTS.md</code>, <code>docs/PROJECT_STATE.md</code>, the top of <code>docs/BACKLOG.md</code>, and the most recent entries in <code>docs/RUN_LOG.md</code> and <code>docs/DECISIONS.md</code>.</li>
+        <li>If another run left an unfinished but coherent checkpoint, resume it only if its next step fits the current run.</li>
+        <li>Otherwise choose the highest-priority <code>READY</code> task whose dependencies are satisfied.</li>
+        <li>If that task is obviously larger than about 20 minutes of implementation plus verification, split it into smaller backlog tasks before coding and take only the first slice.</li>
+        <li>If no READY task exists, derive the smallest safe task from the current milestone and add it to the backlog. Do not invent a new product milestone.</li>
+        <li>State the selected task and acceptance checks in the run log or temporary scratch note, then execute.</li>
+      </ol>
+
+      <h3>2.7 No-babysitting decision policy</h3>
+      <p>
+        When ordinary implementation details are ambiguous, the agent should not interrupt the user. Use the following deterministic fallback order:
+      </p>
+      <ol>
+        <li><strong>Follow existing repository precedent.</strong> Reuse the current language, framework, package manager, naming, test style, and directory conventions.</li>
+        <li><strong>Prefer the smallest reversible change.</strong> Add a narrow adapter/function/fixture instead of a generalized framework unless the backlog explicitly requires generalization.</li>
+        <li><strong>Prefer boring dependencies.</strong> Use existing dependencies first, then standard-library capabilities, then a mature small dependency only when it materially reduces risk.</li>
+        <li><strong>Preserve privacy and data safety.</strong> When unsure whether data should leave the device, keep it local and document the unresolved choice.</li>
+        <li><strong>Preserve behavior.</strong> If requirements are unclear, do not remove, rename, migrate, or rewrite working surfaces without a recorded reason.</li>
+        <li><strong>Record assumptions.</strong> A reversible assumption belongs in the run log; a durable architectural choice belongs in the decision log.</li>
+      </ol>
+
+      <div class="callout warn">
+        <strong>Human-only blocker criteria.</strong> A run may ask the user for input only when progress genuinely requires something the agent cannot safely infer or obtain:
+        credentials/authorization, spending money or enabling paid infrastructure, destructive or irreversible operations, legal/terms approval, a product-policy choice that changes the promised behavior,
+        or access to an external resource controlled only by the user. Routine library choices, filenames, code style, test organization, refactors, and other reversible technical details are not human-only blockers.
+      </div>
+
+      <h3>2.8 Editing rules</h3>
+      <ul>
+        <li>Never rewrite unrelated files “for cleanup” during a focused run.</li>
+        <li>Never delete or reset unknown uncommitted work. Inspect it and work around it.</li>
+        <li>Do not perform a broad dependency upgrade as a side effect of adding one feature.</li>
+        <li>Do not regenerate lockfiles unless the selected task requires a dependency change.</li>
+        <li>Do not make mass formatting changes unless formatting is the actual task.</li>
+        <li>Do not hide failures by weakening tests, disabling type checks, swallowing exceptions, or removing validation.</li>
+        <li>Do not claim an external API or website supports a capability unless it was verified from authoritative evidence or a reproducible fixture.</li>
+        <li>For platform scraping/collection experiments, prefer recorded fixtures and deterministic parsers before live automation.</li>
+        <li>Never put secrets, session tokens, cookies, credentials, private source histories, or user data into Git.</li>
+      </ul>
+
+      <h3>2.9 Verification ladder</h3>
+      <p>
+        Verification should match the change. A weaker model must not either skip tests entirely or waste the run on an unrelated full-suite test.
+        Use the cheapest applicable checks first and escalate only while time remains:
+      </p>
+      <ol>
+        <li>Syntax / parse check for edited files.</li>
+        <li>Targeted unit or fixture test for the changed behavior.</li>
+        <li>Relevant package-level lint/typecheck.</li>
+        <li>Relevant package test suite.</li>
+        <li>Repository-wide build/test only when the change is cross-cutting or the project is small enough to finish safely inside the run.</li>
+      </ol>
+      <p>
+        If a pre-existing failure is discovered, distinguish it from a regression caused by the run. Do not spend the rest of the time fixing unrelated failures.
+        Record the exact command and a short failure summary in <code>PROJECT_STATE.md</code> or the run log.
+      </p>
+
+      <h3>2.10 Terminal states and what to do at minute 27</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>State</th><th>Use when</th><th>Required end-of-run actions</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>DONE</code></td><td>All acceptance checks passed.</td><td>Update state/backlog/run log, inspect diff, commit and push if authorized, then stop.</td></tr>
+            <tr><td><code>PARTIAL_CHECKPOINT</code></td><td>Useful coherent progress exists but the whole task is not complete.</td><td>Make the code safe, describe exactly what works and what remains, split the remaining work into a READY task, checkpoint if repository policy permits, then stop.</td></tr>
+            <tr><td><code>BLOCKED</code></td><td>A genuine human-only or external blocker prevents progress.</td><td>Record the blocker, evidence, and the single smallest piece of information/action needed. Do not keep asking variants of the same question.</td></tr>
+            <tr><td><code>RESEARCH_COMPLETE</code></td><td>The selected run was an investigation rather than code implementation.</td><td>Record sources/evidence, conclusion, confidence, unknowns, and the next executable task. Avoid pretending uncertain findings are settled architecture.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>2.11 Commit and synchronization behavior</h3>
+      <ul>
+        <li>Before committing, inspect <code>git diff</code> and <code>git status --short</code>.</li>
+        <li>Commit only coherent work. A checkpoint commit is allowed when it is safe and clearly labeled, but never label known-broken work as complete.</li>
+        <li>Use concise task-oriented commit messages, for example <code>feat(adapter): parse submission fixture</code> or <code>docs(run): record RC-012 checkpoint</code>.</li>
+        <li>If authenticated GitHub access is available and project policy allows it, push the commit so the repository remains the collaboration source of truth.</li>
+        <li>If pushing is unavailable, do not stall the run. Leave a clean local commit when possible and record the commit hash plus exact push command in the run log.</li>
+        <li>Never force-push, rewrite public history, delete branches, or modify repository visibility during an ordinary run.</li>
+      </ul>
+
+      <h3>2.12 Research runs</h3>
+      <p>
+        Platform-access research also uses the 30-minute limit. The agent should answer one narrow question per run, such as “What submission metadata can the official Codeforces API return today?”
+        or “Can a logged-in user obtain their own source text through the normal website flow?” Research runs must prefer authoritative platform documentation and reproducible observations,
+        record the date, separate confirmed facts from assumptions, and produce a concrete next task. A research run must not silently become a two-hour browsing session.
+      </p>
+
+      <h3>2.13 Debugging runs</h3>
+      <p>
+        Debugging is also bounded. Create or identify a reproducible failure, form one hypothesis at a time, and spend no more than about 12 minutes pursuing a single hypothesis.
+        If the root cause remains unknown near the checkpoint boundary, preserve the reproducer, logs, commands, and eliminated hypotheses for the next run. “Still debugging” is not a reason to cross 30 minutes.
+      </p>
+
+      <h3>2.14 Minimum end-of-run handoff</h3>
+      <p>Every run log entry should be understandable by a model that has never seen the previous chat. Use this exact compact structure:</p>
+      <pre><code>## Run YYYY-MM-DD / RC-XXX
+Status: DONE | PARTIAL_CHECKPOINT | BLOCKED | RESEARCH_COMPLETE
+Objective: one sentence
+
+Changed:
+- file/path — what changed and why
+
+Verified:
+- command — PASS/FAIL, short result
+
+Assumptions / decisions:
+- only non-obvious items
+
+Remaining / next:
+- one concrete next task, ideally with backlog ID
+
+Blocker (only if blocked):
+- exact external input/action required
+
+Commit:
+- &lt;hash or “not committed”&gt;</code></pre>
+
+      <h3>2.15 Canonical prompt for a weaker coding model</h3>
+      <p>
+        If an external agent cannot reliably infer the run protocol from the repository, give it the following instruction verbatim or place an equivalent version in <code>AGENTS.md</code>:
+      </p>
+      <pre><code>ROOKIE COACH AUTONOMOUS RUN CONTRACT
+
+You are an autonomous repository worker. Complete ONE useful, bounded task.
+HARD WALL-CLOCK LIMIT: 30 minutes. Never exceed it.
+At minute 27 stop new work and checkpoint. At minute 30 stop completely.
+
+NO BABYSITTING:
+- Do not ask the user routine technical questions.
+- Do not ask “what next?” when the repository contains a milestone/backlog.
+- Reuse repository precedent. Choose the smallest reversible implementation.
+- Ask only for a genuine human-only blocker: credentials/authorization,
+  paid/destructive/irreversible action, legal/terms approval, or a product-policy
+  choice that materially changes promised behavior.
+
+START OF RUN:
+1. Record the run start time.
+2. Run git status --short. Never discard unknown work.
+3. Read AGENTS.md, PROJECT_STATE, BACKLOG, recent RUN_LOG and DECISIONS.
+4. Pick the highest-priority READY task that fits this run.
+5. If it is too large, split it before coding.
+6. Write explicit acceptance checks.
+
+DURING RUN:
+- Work only on the selected task.
+- Do not do unrelated cleanup or dependency upgrades.
+- Do not hallucinate external API behavior; verify it.
+- Never expose or commit secrets/user data.
+- Use command timeouts. Never start indefinite watch/server processes.
+- Prefer fixtures and deterministic tests for platform parsers.
+
+VERIFY:
+- Run the smallest relevant syntax/test/lint/typecheck checks.
+- Do not hide failures by weakening tests.
+- Separate pre-existing failures from regressions you caused.
+
+END OF RUN:
+- By minute 27, stop feature work.
+- Update PROJECT_STATE, BACKLOG and RUN_LOG.
+- Record exact verification commands and results.
+- Inspect git diff and git status.
+- Commit/push coherent work when authorized; otherwise leave an exact handoff.
+- End with exactly one state: DONE, PARTIAL_CHECKPOINT, BLOCKED,
+  or RESEARCH_COMPLETE.
+- Stop at 30 minutes even when unfinished.</code></pre>
+
+      <h3>2.16 Examples of good and bad run sizing</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Bad / too broad</th><th>Good run-sized replacement</th></tr></thead>
+          <tbody>
+            <tr><td>“Implement the Chrome extension.”</td><td>“Create a Manifest V3 skeleton that loads, exposes one popup, and passes a manifest validation check.”</td></tr>
+            <tr><td>“Add Codeforces support.”</td><td>“Add a fixture-backed parser for one submission page and one deterministic test.”</td></tr>
+            <tr><td>“Build the analysis engine.”</td><td>“Compute verdict counts and repeated-attempt counts from normalized fixtures.”</td></tr>
+            <tr><td>“Improve architecture.”</td><td>“Extract the existing submission normalization function into one package without changing behavior, then run its tests.”</td></tr>
+            <tr><td>“Research all platforms.”</td><td>“Verify current official Codeforces submission-history fields and record evidence plus unknowns.”</td></tr>
+            <tr><td>“Fix all failing tests.”</td><td>“Reproduce and fix the one failure introduced by RC-012; log unrelated pre-existing failures.”</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>2.17 First-run bootstrap behavior</h3>
+      <p>
+        If an agent receives a repository that has only this overview and no operational state files, <strong>Run 1 is already decided</strong>. The agent must not ask the human what to build first,
+        which platform to choose, which product outcome to prioritize, or how to structure the agent process. It must execute <strong>RC-001</strong> from the fixed run queue below.
+        The bootstrap must create <code>AGENTS.md</code>, <code>docs/PROJECT_STATE.md</code>, <code>docs/BACKLOG.md</code>, <code>docs/DECISIONS.md</code>, and <code>docs/RUN_LOG.md</code>;
+        copy the hard constraints from this document; seed RC-002 through RC-012 exactly as described below; verify the files; checkpoint/commit when authorized; and stop within 30 minutes.
+      </p>
+
+      <div class="callout danger">
+        <span class="principle">Runs 1–12 have enough product context already.</span>
+        Do not stop to ask the owner an open-ended product question during these runs. The decisions and temporary defaults below are the authorized execution context.
+        If a later permanent choice is still undecided, use the stated temporary default, keep the implementation reversible, record it, and continue.
+      </div>
+
+      <h3>2.18 Owner context and authorized working decisions</h3>
+      <p>
+        The following decisions come from the project conversation or are deliberately chosen as reversible defaults so autonomous models can make progress without inventing product strategy.
+        “Owner-stated” means the owner explicitly described the intent. “Working default” means it is authorized for the first milestone but can be changed later without treating it as a product promise.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Area</th><th>Decision for the current milestone</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Primary user</td><td>Competitive-programming students at the owner's university, with beginners as the first practical audience. A Codeforces rating around 800–1000 is an example persona, not a hard eligibility rule.</td><td>Owner-stated</td></tr>
+            <tr><td>Core problem</td><td>Students accumulate contest attempts without systematically learning from repeated mistakes, weakly absorbed topics, failed attempts, and patterns across their code.</td><td>Owner-stated</td></tr>
+            <tr><td>Product shape</td><td>The browser extension is a collection layer. The product should grow into a persistent guide/coach grounded in the student's own evidence; it must not be designed as a thin generic LLM wrapper.</td><td>Owner-stated</td></tr>
+            <tr><td>Whose data</td><td>One student's own submission history, collected with that student's permission. Keep one student's records isolated from another student's records.</td><td>Owner-stated</td></tr>
+            <tr><td>Historical depth</td><td>The desired end state is historical backfill: collect as much of the student's past submission/code history as the platform legitimately exposes, rather than collecting only submissions made after installation.</td><td>Owner-stated</td></tr>
+            <tr><td>First platform</td><td><strong>Codeforces first.</strong> Do not start AtCoder, CodeChef, LeetCode, or another adapter until the Codeforces vertical slice reaches the first-milestone definition of done.</td><td>Working decision derived from the current investigation</td></tr>
+            <tr><td>First measurable product outcome</td><td>From one student's Codeforces history, produce a local evidence report that surfaces repeat-attempt patterns, verdict/failure patterns, and other defensible signals that can later support personalized coaching.</td><td>Working default aligned with owner-stated goal</td></tr>
+            <tr><td>Source-code requirement</td><td>Source code is important evidence. The system must distinguish <code>source available</code>, <code>source unavailable</code>, and <code>source not yet collected</code>; never pretend metadata-only imports include source. Verify the legitimate acquisition path before automating live source capture.</td><td>Owner-stated requirement + safety constraint</td></tr>
+            <tr><td>Collection behavior</td><td>Use official APIs for data they actually expose. For anything not exposed by an API, first verify the normal user-authorized browser flow and current platform rules. Never bypass authentication, CAPTCHAs, anti-bot controls, access controls, or other restrictions.</td><td>Working safety default</td></tr>
+            <tr><td>Early data scope</td><td>Normalize platform, configured student account, submission ID, problem reference, verdict, language, timestamp, contest/problem metadata when available, source text when legitimately available, and source-availability/capture provenance.</td><td>Working default</td></tr>
+            <tr><td>Storage for first milestone</td><td>Local-first. Fixtures and test data live in the repo; real student history stays on the user's device during the first milestone. No cloud upload, multi-user database, or remote code retention is required for Runs 1–12.</td><td>Working default</td></tr>
+            <tr><td>Browser target</td><td>Chrome/Chromium using Manifest V3 for the first extension milestone. Cross-browser support is deferred.</td><td>Working default</td></tr>
+            <tr><td>Implementation stack</td><td>Use TypeScript, Node.js 22+ conventions, npm workspaces, and Vitest for the initial codebase unless an already-existing repository precedent conflicts. Keep extension UI simple; do not add React/Vue/Svelte just to render the first report.</td><td>Working default</td></tr>
+            <tr><td>Analysis split</td><td>Build deterministic normalization and evidence metrics first. Do not require an LLM provider, API key, embeddings, or prompt framework for the first milestone. LLM-assisted coaching comes after the evidence pipeline is trustworthy.</td><td>Working default</td></tr>
+            <tr><td>Distribution</td><td>Public/open-source project, downloadable and runnable locally. GitHub is the durable collaboration source of truth.</td><td>Owner-stated</td></tr>
+            <tr><td>Hosted deployment</td><td>Railway is a future hosted option, not a requirement for the first local vertical slice. Do not spend Runs 1–12 on Railway deployment unless the local milestone is already complete.</td><td>Owner-stated direction</td></tr>
+            <tr><td>Monetization</td><td>A subscription or other business model may be explored later. Do not build billing, plans, feature gates, or payment infrastructure during the first milestone.</td><td>Owner-stated as future/undecided</td></tr>
+            <tr><td>Repository license</td><td>Do not stop early work to ask for a license choice. Leave the permanent license undecided until the owner chooses it; record this as a known deferred decision.</td><td>Explicit non-blocking deferment</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout good">
+        <strong>Decision rule for weaker models:</strong> a deferred permanent decision is <em>not</em> a blocker when the table above gives a reversible current default. Implement the reversible default and continue. Do not ask the owner to re-answer context already captured here.
+      </div>
+
+      <h3>2.19 Fixed autonomous run queue: RC-001 through RC-012</h3>
+      <p>
+        This queue is deliberately specific. A model with repository/filesystem/shell access and the appropriate web/browser tools can begin at RC-001 without a clarification turn.
+        After each run, update the backlog statuses and continue with the next READY item in a later invocation. Each item is one run maximum; split only if unexpected repository conditions make it impossible to checkpoint safely within 30 minutes.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Run</th><th>Objective</th><th>Required output / acceptance</th><th>Explicitly out of scope</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>RC-001</strong><br/>Bootstrap agent control plane</td>
+              <td>Create the durable run-control files so future models need no conversation history.</td>
+              <td><code>AGENTS.md</code>, <code>docs/PROJECT_STATE.md</code>, <code>docs/BACKLOG.md</code>, <code>docs/DECISIONS.md</code>, and <code>docs/RUN_LOG.md</code> exist. PROJECT_STATE sets milestone M0 to “prove a local Codeforces evidence pipeline for one student.” BACKLOG contains RC-002 through RC-012 from this table. DECISIONS distinguishes owner-stated decisions from working defaults. RUN_LOG records RC-001. Validate paths/content, inspect git diff/status, commit if authorized.</td>
+              <td>No application code, no API integration, no architecture debate, no questions to the owner.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-002</strong><br/>Codeforces access research</td>
+              <td>Establish what can currently be obtained legitimately for one user's history.</td>
+              <td>Create <code>docs/research/codeforces-data-access.md</code>. Verify, from authoritative current evidence, official API submission-history capabilities/fields, pagination/rate constraints, whether source text is exposed by the API, and how a logged-in user normally views their own source. Separate confirmed facts from assumptions; date sources/findings; record a safe acquisition plan. If live source automation is not clearly permitted/available, choose fixture/user-export parsing as the prototype path rather than bypassing controls.</td>
+              <td>No scraping bypass, no credentials, no broad multi-platform research, no production crawler.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-003</strong><br/>Normalized evidence contract</td>
+              <td>Define a platform-neutral representation before writing adapters.</td>
+              <td>Add versioned JSON schemas (or equivalently strict documented contracts) for <code>StudentAccount</code>, <code>ProblemRef</code>, and <code>Submission</code>, plus at least one sanitized Codeforces example fixture. Required concepts include platform, student namespace/handle, submission ID, problem, verdict, language, timestamp, optional contest/difficulty/tags, nullable source, explicit source-status, capture method/provenance, and captured-at timestamp. Validate JSON deterministically.</td>
+              <td>No LLM schema, no recommendation engine, no cloud database.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-004</strong><br/>Minimal TypeScript workspace</td>
+              <td>Create the smallest maintainable code/test scaffold for the vertical slice.</td>
+              <td>Initialize npm workspaces with a small shared/core package and Codeforces adapter package; TypeScript configuration; Vitest; scripts for <code>test</code> and <code>typecheck</code>. Do not introduce a frontend framework. A trivial smoke test and typecheck must pass. Preserve any pre-existing repository conventions instead if they already exist.</td>
+              <td>No backend, no Railway, no UI framework, no database server.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-005</strong><br/>Codeforces metadata adapter</td>
+              <td>Normalize one page of Codeforces submission metadata without claiming source-code access.</td>
+              <td>Using recorded/sanitized API fixtures from RC-002, implement a typed adapter that maps one official submission-history response/page into the normalized submission contract. Tests cover IDs, problem reference, verdict, language, timestamp, and explicit <code>sourceStatus</code> when source is absent.</td>
+              <td>No historical loop yet, no live source extraction, no extension UI.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-006</strong><br/>Historical metadata backfill</td>
+              <td>Build a bounded, testable iterator for a student's historical Codeforces metadata.</td>
+              <td>Implement pagination/backfill around the verified official API behavior from RC-002, with injectable network access and deterministic tests for multiple pages, empty completion, duplicate protection, and bounded retry/rate behavior. The live network is optional for tests; fixtures are mandatory.</td>
+              <td>No source capture, no arbitrary-handle mass collection, no background daemon.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-007</strong><br/>Chrome MV3 extension shell</td>
+              <td>Create the user-controlled collection entry point.</td>
+              <td>Add a loadable Manifest V3 extension skeleton with a minimal popup/options surface: configured Codeforces handle, a clear explanation that collection concerns the student's own history, and an explicit user action to start import. Use minimum permissions. Build/manifest validation succeeds. No secrets or cookies are stored in source control.</td>
+              <td>No polished design system, no multi-platform selector, no login service.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-008</strong><br/>Local evidence storage</td>
+              <td>Persist normalized records locally and isolate data by student/platform account.</td>
+              <td>Create a local storage abstraction suitable for the extension; prefer IndexedDB for potentially large histories. Include an in-memory/fake implementation for deterministic tests. Upsert by platform + account + submission ID; preserve source-status/provenance; demonstrate that two configured accounts cannot overwrite each other's records.</td>
+              <td>No remote sync, no hosted DB, no multi-user server.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-009</strong><br/>Source-evidence prototype</td>
+              <td>Prototype the source-code path using the legitimate method established by RC-002.</td>
+              <td>If RC-002 confirms a normal user-authorized browser route suitable for collection, create a narrow parser/capture adapter and test it against a sanitized saved fixture. If live automation is not clearly justified, implement the same interface against a user-export/saved-page fixture and mark live capture as deferred. In both cases, distinguish available/unavailable/not-collected source and never bypass access controls.</td>
+              <td>No CAPTCHA solving, no anti-bot bypass, no credential harvesting, no bulk scraping.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-010</strong><br/>One-student import vertical slice</td>
+              <td>Connect the extension action to Codeforces metadata import and local normalized storage.</td>
+              <td>From one configured handle, a user-triggered import can process fixture/mocked data end-to-end and store normalized submissions locally. Where an allowed source fixture is available, merge source evidence by submission ID. Provide progress/error states sufficient for debugging. Tests do not depend on a live website.</td>
+              <td>No scheduler, no continuous background scraping, no other platforms.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-011</strong><br/>Deterministic evidence summary</td>
+              <td>Turn normalized history into the first coaching evidence without an LLM.</td>
+              <td>Compute and test at least: total attempts, accepted count, verdict distribution, problems with repeated attempts, attempts-before-acceptance where inferable, language distribution, and difficulty/tag summaries when metadata exists. Keep claims evidence-based: do not call a topic “weak” merely because it appears once.</td>
+              <td>No personalized curriculum generator, no embeddings, no LLM calls.</td>
+            </tr>
+            <tr>
+              <td><strong>RC-012</strong><br/>Local first report</td>
+              <td>Make the first milestone visible to a student.</td>
+              <td>Add a simple local extension page/report showing the RC-011 evidence for the configured student, including repeated-attempt/failure patterns and data-coverage notes such as how many submissions lack source. The report must be understandable without an LLM and must not imply causal weaknesses that the evidence does not support. Test rendering/transform logic where practical and document a manual demo path.</td>
+              <td>No production hosting, no monetization, no second platform, no elaborate UI.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>2.20 Deterministic branching rules for unexpected findings</h3>
+      <ul>
+        <li><strong>If Codeforces official API lacks source code:</strong> this is expected to be handled as a capability gap, not a project blocker. Continue metadata work; use the verified normal browser/user-export route for source experiments only when legitimate; preserve explicit source-status.</li>
+        <li><strong>If live source collection is ambiguous under platform rules:</strong> do not ask the owner to authorize a bypass. Stay on fixture/user-export parsing and record the live path as deferred.</li>
+        <li><strong>If a proposed dependency/framework choice is unclear:</strong> use the current stack defaults above or existing repository precedent. Do not ask the owner.</li>
+        <li><strong>If the repository already contains partially implemented equivalents:</strong> inspect them, map them to the closest RC task, preserve compatible work, and adapt the acceptance criteria rather than duplicating files.</li>
+        <li><strong>If a task finishes early:</strong> verify and checkpoint early. Do not opportunistically start the next run's task in the same run unless it is a tiny documentation correction required by the current acceptance criteria.</li>
+        <li><strong>If a task does not fit:</strong> create a narrower child task, checkpoint, and stop. The 30-minute cap wins over completing the numbered item in one sitting.</li>
+        <li><strong>If web/tool access is temporarily unavailable:</strong> finish any deterministic repository work possible, record the external blocker precisely, and stop. Do not ask open-ended product questions as a substitute.</li>
+      </ul>
+
+      <div class="callout good">
+        <span class="principle">Autonomy target:</span> a capable or weaker coding model should be able to receive only this repository plus the instruction <code>Do Run 1</code>, execute RC-001 without clarification, and leave a state from which another fresh model can execute RC-002. The same handoff pattern should continue through RC-012 without routine owner supervision.
+      </div>
     </section>
 
     <section id="problem" class="card">
-      <h2>2. The Problem</h2>
+      <h2>3. The Problem</h2>
       <p>
         A typical beginner watches tutorials, follows a bootcamp or roadmap, solves some easy problems, and starts entering contests.
         Their rating can improve before their fundamentals become consistent. They may know several techniques superficially while repeatedly making the same implementation mistakes,
@@ -339,7 +798,7 @@
     </section>
 
     <section id="vision" class="card">
-      <h2>3. Product Vision</h2>
+      <h2>4. Product Vision</h2>
       <p>
         The long-term product should feel more like a persistent competitive-programming mentor than a one-shot chatbot.
         It should remember what the student has struggled with, recognize repeated patterns, explain those patterns in understandable language,
@@ -363,7 +822,7 @@
     </section>
 
     <section id="users" class="card">
-      <h2>4. Target Users</h2>
+      <h2>5. Target Users</h2>
       <div class="grid-2">
         <div class="mini">
           <h3>Primary persona</h3>
@@ -389,7 +848,7 @@
     </section>
 
     <section id="collection" class="card">
-      <h2>5. Data Collection Layer</h2>
+      <h2>6. Data Collection Layer</h2>
       <p>
         The initial concept uses a Chrome extension installed by the student. With explicit permission, the extension would collect the student's own submissions and source code
         where the platform technically allows access and where the chosen integration approach is compatible with applicable platform rules.
@@ -446,7 +905,7 @@
     </section>
 
     <section id="analysis" class="card">
-      <h2>6. Analysis and Coaching Layer</h2>
+      <h2>7. Analysis and Coaching Layer</h2>
       <p>
         A useful architecture should separate facts that can be extracted reliably from code and metadata from higher-level interpretation.
         The system should not rely on an LLM to invent facts that deterministic analysis can calculate directly.
@@ -494,7 +953,7 @@
     </section>
 
     <section id="architecture" class="card">
-      <h2>7. Candidate System Architecture</h2>
+      <h2>8. Candidate System Architecture</h2>
       <p class="muted">This architecture is intentionally provisional. It is a useful starting point, not a locked technology decision.</p>
 
       <pre><code>┌──────────────────────────────┐
@@ -568,7 +1027,7 @@
     </section>
 
     <section id="privacy" class="card">
-      <h2>8. Privacy, Consent, and Security</h2>
+      <h2>9. Privacy, Consent, and Security</h2>
       <p>
         Competitive-programming source code can be personal academic work, and browser extensions operate in a security-sensitive environment.
         Data ownership and consent therefore need to be part of the product architecture from the beginning.
@@ -590,7 +1049,7 @@
     </section>
 
     <section id="mvp" class="card">
-      <h2>9. MVP Strategy</h2>
+      <h2>10. MVP Strategy</h2>
       <p>
         The first version should prove one complete learning loop. Supporting every platform and every kind of coaching at once would make it difficult to tell whether the core idea actually works.
       </p>
@@ -623,7 +1082,7 @@
     </section>
 
     <section id="roadmap" class="card">
-      <h2>10. Candidate Roadmap</h2>
+      <h2>11. Candidate Roadmap</h2>
       <div class="grid-2">
         <div class="mini">
           <h3>Phase 0 — Discovery</h3>
@@ -665,7 +1124,7 @@
     </section>
 
     <section id="evaluation" class="card">
-      <h2>11. Evaluation for the University Project</h2>
+      <h2>12. Evaluation for the University Project</h2>
       <p>
         The university version should include a defensible evaluation method. Rating change alone is noisy and may require too much time,
         so the project can measure several shorter-term indicators of coaching quality.
@@ -681,7 +1140,7 @@
     </section>
 
     <section id="business" class="card">
-      <h2>12. Open Source, Hosting, and Business Direction</h2>
+      <h2>13. Open Source, Hosting, and Business Direction</h2>
       <p>
         The project is intended to be open source so that anyone can download it, inspect the code, and run it locally.
         At the same time, a hosted version may be deployed on Railway to provide a lower-friction option for students who do not want to self-host.
@@ -714,23 +1173,49 @@
     </section>
 
     <section id="questions" class="card">
-      <h2>13. High-Impact Open Questions</h2>
-      <ol>
-        <li><strong>First outcome:</strong> after collecting a student's history, what is the single most valuable thing version 1 should do?</li>
-        <li><strong>First platform:</strong> which platform should be supported completely before adding another?</li>
-        <li><strong>Historical depth:</strong> must version 1 import all past submissions, or can it begin from recent history?</li>
-        <li><strong>Data scope:</strong> source code only, or source + verdicts + problem metadata + contest context + problem statements?</li>
-        <li><strong>Storage:</strong> should source code stay local by default, upload only after opt-in, or use another model?</li>
-        <li><strong>Identity linking:</strong> how should a student prove ownership of handles across multiple platforms?</li>
-        <li><strong>Analysis split:</strong> what belongs in deterministic/static analysis and what genuinely benefits from an LLM?</li>
-        <li><strong>Evaluation:</strong> what measurable result will demonstrate that the university project succeeded?</li>
-        <li><strong>Open-source license:</strong> which license should be selected?</li>
-        <li><strong>Hosted differentiation:</strong> if a paid hosted version exists later, what does it add beyond the open-source version?</li>
-      </ol>
+      <h2>14. Current Decisions and Deferred Later Decisions</h2>
+      <div class="callout good">
+        <span class="principle">There are no owner questions that must be answered before RC-001 through RC-012.</span>
+        The first milestone is deliberately specified above. Agents must treat the items in this section as later decision points, not reasons to stop current work.
+      </div>
+
+      <h3>Locked for the first milestone</h3>
+      <ul>
+        <li>Codeforces is the first platform.</li>
+        <li>The first milestone is one student's local Codeforces evidence pipeline plus a deterministic report.</li>
+        <li>Historical backfill is the target; source code is valuable but must be represented honestly when unavailable.</li>
+        <li>Collection must be user-authorized and must not bypass platform controls.</li>
+        <li>The prototype is local-first; no remote upload of real student code is required.</li>
+        <li>Chrome/Chromium Manifest V3 is the first browser target.</li>
+        <li>TypeScript + npm workspaces + Vitest is the initial stack unless the repository already establishes another compatible precedent.</li>
+        <li>Deterministic evidence comes before LLM-assisted coaching.</li>
+        <li>AtCoder, CodeChef, LeetCode, Railway deployment, billing, and multi-user cloud architecture are outside RC-001 through RC-012.</li>
+      </ul>
+
+      <h3>Deferred decisions — record, do not ask during Runs 1–12</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Later decision</th><th>Current behavior</th><th>When it becomes relevant</th></tr></thead>
+          <tbody>
+            <tr><td>Permanent open-source license</td><td>Do not choose one autonomously; keep it in DECISIONS as deferred.</td><td>Before a formal public release/contributor push where licensing matters.</td></tr>
+            <tr><td>Second platform priority</td><td>Do not implement another platform.</td><td>After the Codeforces local vertical slice is demonstrably working.</td></tr>
+            <tr><td>Cloud architecture and remote retention</td><td>Keep real user data local; design interfaces so storage can be swapped later.</td><td>When preparing the Railway-hosted product.</td></tr>
+            <tr><td>Account-ownership proof across platforms</td><td>Use a configured local account namespace; never claim it is verified identity.</td><td>Before multi-platform account linking or hosted multi-user use.</td></tr>
+            <tr><td>LLM provider/model/prompt stack</td><td>Use no LLM dependency in the first milestone.</td><td>After deterministic evidence and report quality are trustworthy.</td></tr>
+            <tr><td>Exact coaching curriculum/recommendation algorithm</td><td>Produce evidence, not overconfident prescriptions.</td><td>After the first report can reliably summarize a student's history.</td></tr>
+            <tr><td>Formal university evaluation protocol</td><td>Keep the code testable and log candidate metrics; do not block implementation.</td><td>Before the project evaluation/user-study phase.</td></tr>
+            <tr><td>Subscription/business model</td><td>Build no billing or premium gating.</td><td>Only after usefulness and deployment are proven.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        If a weaker model encounters one of these topics while executing RC-001 through RC-012, the correct action is to write “deferred by runbook” in the relevant decision/run log and continue the current run. It should not ask the owner to resolve the topic early.
+      </div>
     </section>
 
     <section id="handoff" class="card">
-      <h2>14. Collaboration and Fresh-Chat Handoff</h2>
+      <h2>15. Collaboration and Fresh-Chat Handoff</h2>
       <p>
         The GitHub repository should be the durable source of truth for this project. The goal is to make it possible to continue development from a second account,
         a fresh chat, or another development environment without depending on the original conversation history.
@@ -743,13 +1228,14 @@
         <li>The system should learn from actual submission history, including mistakes, not only accepted solutions.</li>
         <li>The project should remain open source and runnable locally.</li>
         <li>A hosted Railway deployment is a future option, not a current architectural requirement.</li>
-        <li>Do not silently convert unresolved ideas into fixed requirements.</li>
+        <li>Do not silently convert deferred long-term ideas into permanent requirements; use the explicit first-milestone defaults in Section 2 and keep moving.</li>
         <li>Major product and architecture decisions should be recorded in the repository.</li>
       </ul>
 
       <h3>Immediate next work</h3>
       <p>
-        Choose the first supported platform and the first measurable coaching outcome. Then perform a focused technical investigation of that platform's current submission-history and source-code access path before building a large multi-platform architecture.
+        <strong>Do RC-001.</strong> Do not ask the owner which platform or outcome to choose: for the current milestone, Codeforces and the local deterministic evidence report are already selected.
+        After RC-001, follow RC-002 through RC-012 in dependency order, one bounded run at a time. The first technical investigation is Codeforces submission-history and source-evidence access; the first implementation target is the normalized local evidence pipeline.
       </p>
 
       <div class="callout good">
@@ -759,7 +1245,7 @@
   </main>
 
   <footer>
-    <div class="wrap">Rookie Coach · Detailed project overview and repository handoff · Updated 2026-09-27</div>
+    <div class="wrap">Rookie Coach · Detailed project overview, autonomous runbook, and repository handoff · Updated 2026-09-27</div>
   </footer>
 </body>
 </html>

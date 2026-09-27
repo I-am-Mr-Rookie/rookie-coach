@@ -51,4 +51,4 @@ The user wants the project open sourced so anyone can download and run it locall
 
 ## Current phase
 
-Discovery / requirements clarification. The next conversation should continue by resolving the highest-impact open questions rather than jumping directly to a large implementation.
+Discovery with a bounded first milestone. The [updated run system](project-overview.html#run-system) authorizes reversible Codeforces and local deterministic-report defaults for RC-001 through RC-012. Read [project state](PROJECT_STATE.md), [backlog](BACKLOG.md), and [decisions](DECISIONS.md) before continuing. Permanent product choices remain deferred; work one bounded run at a time.

@@ -1,6 +1,6 @@
 # Open Questions
 
-These questions are intentionally unresolved. They should be answered before major implementation choices are locked in.
+These questions concern permanent product decisions. The [run system](project-overview.html#run-system) supplies reversible defaults for the first local Codeforces milestone, so RC-001 through RC-012 can proceed without treating these questions as blockers. The [decision log](DECISIONS.md) distinguishes those defaults from owner-stated direction.
 
 1. **First measurable student outcome** — After the system has a student's history, what is the single most valuable result of version 1: mistake diagnosis, topic-gap detection, next-problem recommendations, structured learning plans, contest review, or something else?
 2. **First supported platform** — Which platform should be supported end-to-end first? This determines the initial data-access and authentication design.

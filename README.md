@@ -18,6 +18,6 @@ The collected history is intended to power a coaching system that can eventually
 
 ## Current status
 
-The product is still in discovery. No final architecture, platform priority, storage model, or monetization model has been chosen yet.
+The product is still in discovery. For the first local milestone, the [run system](docs/project-overview.html#run-system) uses Codeforces and a deterministic evidence report as reversible working defaults. Permanent architecture, license, hosted storage, and monetization remain undecided.
 
-See the [detailed project overview](docs/project-overview.html) for the full concept, [`docs/HANDOFF.md`](docs/HANDOFF.md) for current project context, and [`docs/OPEN_QUESTIONS.md`](docs/OPEN_QUESTIONS.md) for the next decisions to make.
+See the [detailed project overview and run system](docs/project-overview.html), [project state](docs/PROJECT_STATE.md), and [execution backlog](docs/BACKLOG.md) for the next bounded run. [`docs/HANDOFF.md`](docs/HANDOFF.md) preserves the early context; [`docs/OPEN_QUESTIONS.md`](docs/OPEN_QUESTIONS.md) records deferred product questions.
