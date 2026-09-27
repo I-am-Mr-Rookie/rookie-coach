@@ -39,7 +39,7 @@ Acceptance: Add versioned JSON schemas (or equivalently strict documented contra
 Out of scope: No LLM schema, no recommendation engine, no cloud database.
 
 ## RC-004 Minimal TypeScript workspace
-Status: READY
+Status: DONE
 Priority: P04
 Timebox: one run, <= 30 min
 Depends on: RC-003
@@ -51,7 +51,7 @@ Acceptance: Initialize npm workspaces with a small shared/core package and Codef
 Out of scope: No backend, no Railway, no UI framework, no database server.
 
 ## RC-005 Codeforces metadata adapter
-Status: WAITING
+Status: READY
 Priority: P05
 Timebox: one run, <= 30 min
 Depends on: RC-004

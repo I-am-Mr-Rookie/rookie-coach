@@ -79,3 +79,29 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-003 checkpoint; use the Git commit containing this entry as its hash.
+
+## Run 2026-09-27 / RC-004
+Status: DONE
+Objective: Create the smallest TypeScript npm workspace for shared evidence types and the Codeforces adapter.
+
+Changed:
+- `package.json`, `package-lock.json`, `tsconfig.json` — npm workspaces, pinned TypeScript/Vitest, test and typecheck scripts.
+- `packages/core` — version 1 record types aligned with the documented contract.
+- `packages/codeforces` — package linkage and a cross-workspace smoke test; no metadata adapter yet.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — mark RC-004 complete and activate RC-005.
+
+Verified:
+- `npm run typecheck` — PASS for both packages.
+- `npm test` — PASS, one smoke test.
+- `python3 scripts/check-evidence-fixture.py` — PASS for the RC-003 synthetic fixture.
+- `git diff --check` — PASS; final staged diff/status inspected before commit.
+
+Assumptions / decisions:
+- Package exports point to TypeScript source for this private, unbuilt workspace; a distributable build is outside RC-004.
+- RC-003 remains on draft PR #1, so RC-004 is based on its branch and should be integrated afterward.
+
+Remaining / next:
+- RC-005 — map one sanitized official Codeforces response page into the normalized submission contract.
+
+Commit:
+- This entry is committed with the RC-004 checkpoint; use the Git commit containing this entry as its hash.
