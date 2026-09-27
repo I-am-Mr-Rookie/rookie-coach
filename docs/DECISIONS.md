@@ -27,3 +27,20 @@ This log separates the owner's stated direction from reversible first-milestone 
 ## RC-002 research update (2026-09-27)
 
 The current Codeforces `user.status` documentation advertises `includeSources` for one's own account. This supersedes the earlier uncertainty about whether the official API has any source option; it does not establish the authenticated payload shape or reliable source coverage. Keep fixture/user-export parsing as the RC-009 prototype path until an authorized local API test confirms those details. See [the access research](research/codeforces-data-access.md). This is a reversible implementation order, not a new product commitment.
+
+## Post-M0 owner direction (2026-09-27)
+
+The owner requested that the post-RC-012 plan be recorded for future workers. This section extends the first-milestone defaults for the local coaching pilot; it does not mark any future task complete.
+
+| Area | Decision / working default | Basis |
+| --- | --- | --- |
+| Next outcome | One narrow recurring-mistake diagnosis grounded in actual attempts, plus one concrete practice action. Abstain when the evidence cannot support it. | Owner accepted the recommendation in the planning interview |
+| Pilot access | The owner says they can recruit five students when ready. They have not yet been enrolled or given consent. | Owner-stated |
+| Project context | This is an independent personal project. The university is not involved or aware of it; there is no supplied university rubric or evaluation requirement. No personal deadline was specified. | Owner clarification |
+| Pilot evaluation | Ask whether diagnoses seem accurate and actions useful; record actual responses, abstentions and limitations. This is informal product feedback, not proof of learning improvement. | Reversible recommendation adopted for this plan |
+| Technical choices | Workers choose the smallest reversible implementation using repository precedent, standard/native capabilities and existing dependencies (Ponytail). Ask only for a genuine owner-only blocker. | Owner delegation |
+| Pilot data boundary | Keep real histories and source on each student's device. Each participant must separately consent to collection and any feedback sharing. Recruitment ability is not collection authorization. | Existing consent boundary continued as a working default |
+| Delivery scope | RC-013 through RC-020 prepare the local pilot; RC-021 reviews actual permitted feedback. The 30-minute rule and one requested run at a time still apply. | Owner requested repository instructions |
+| Later decisions | Permanent license, paid spending, remote student-data processing, hosting, other platforms and billing remain deferred until a concrete need arises. | Existing boundaries retained |
+
+The [post-M0 backlog](BACKLOG.md#post-m0-pilot) is the operational specification. Five volunteers is a recruitment target, not a completion claim. Synthetic tests establish implementation behavior only; live validation and pilot feedback are separate gates.

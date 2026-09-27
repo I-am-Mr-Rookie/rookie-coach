@@ -1,14 +1,25 @@
-# Open Questions
+# Decisions still requiring the owner
 
-These questions concern permanent product decisions. The [run system](project-overview.html#run-system) supplies reversible defaults for the first local Codeforces milestone, so RC-001 through RC-012 can proceed without treating these questions as blockers. The [decision log](DECISIONS.md) distinguishes those defaults from owner-stated direction.
+Read [DECISIONS.md](DECISIONS.md#post-m0-owner-direction-2026-09-27) and the [post-M0 backlog](BACKLOG.md#post-m0-pilot) before asking questions. The owner delegates routine technical choices to the smallest reversible implementation.
 
-1. **First measurable student outcome** — After the system has a student's history, what is the single most valuable result of version 1: mistake diagnosis, topic-gap detection, next-problem recommendations, structured learning plans, contest review, or something else?
-2. **First supported platform** — Which platform should be supported end-to-end first? This determines the initial data-access and authentication design.
-3. **Collection boundary** — Should version 1 collect only source code and submission metadata, or also problem statements, tags, contest context, verdict history, test feedback, and timestamps?
-4. **Historical vs. future collection** — Must the first version import all historical submissions, or is collecting submissions from installation onward acceptable initially?
-5. **Privacy and storage** — Should code remain entirely local by default, be uploaded only when the user opts in, or use another model?
-6. **Identity linking** — How will one student prove/link their accounts across multiple competitive-programming platforms?
-7. **Analysis engine** — What should be deterministic/static analysis versus LLM-assisted analysis?
-8. **Evaluation** — How will the project demonstrate that its coaching is useful for the university project: user study, improvement in solve rate, reduced repeated mistakes, rating changes, or another metric?
-9. **Open-source license** — Which license should be used? No license has been selected yet.
-10. **Hosted product scope** — What features, if any, should differ between local open-source use and a Railway-hosted version?
+## Settled for the next milestone
+
+- Codeforces and the existing local pipeline remain the scope.
+- After the deterministic report, build one supported recurring-mistake diagnosis plus one practice action.
+- The owner can recruit five volunteers when ready. Each student must consent separately; nobody is enrolled by this statement.
+- The project is independent. There is no supplied university rubric or evaluation requirement.
+- Start with informal feedback on diagnosis accuracy and action usefulness. Do not claim demonstrated learning improvement.
+- Keep real history and source local; use synthetic fixtures for development and tests.
+
+## Ask only when the decision becomes necessary
+
+| Topic | Current default | Owner input needed when |
+| --- | --- | --- |
+| Real account access / participant consent | Use synthetic fixtures; no consent presumed. | RC-014 needs an authorized student and local check; the pilot needs each participant's consent. |
+| Actual pilot feedback | RC-021 waits for permitted feedback. | Feedback must be supplied with permission for the intended use; public sharing needs explicit permission. |
+| Permanent license | Add none autonomously. | Preparing a formal public release or contributor/reuse effort. |
+| Paid services / spending | No paid infrastructure. | A concrete, costed need arises. |
+| Remote student-data processing / retention | Keep student history and code on-device. | A proposed hosted or LLM feature requires changing that boundary. |
+| Destructive or irreversible changes | Preserve data, history and repository visibility. | An explicit authorized decision is required. |
+
+Second-platform priority, hosted features, business model and a broader curriculum remain deferred. Do not reopen them merely because RC-012 finishes; first follow the local pilot plan and its evidence.

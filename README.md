@@ -1,6 +1,6 @@
 # Rookie Coach
 
-Rookie Coach is an open-source university project aimed at helping competitive-programming students improve from their actual submission history rather than from generic advice alone.
+Rookie Coach is an independent project intended for open-source distribution. It aims to help competitive-programming students improve from their actual submission history rather than from generic advice alone.
 
 ## Current concept
 
@@ -21,6 +21,8 @@ The collected history is intended to power a coaching system that can eventually
 The product is still in discovery. For the first local milestone, the [run system](docs/project-overview.html#run-system) uses Codeforces and a deterministic evidence report as reversible working defaults. Permanent architecture, license, hosted storage, and monetization remain undecided.
 
 See the [detailed project overview and run system](docs/project-overview.html), [project state](docs/PROJECT_STATE.md), and [execution backlog](docs/BACKLOG.md) for the next bounded run. [`docs/HANDOFF.md`](docs/HANDOFF.md) preserves the early context; [`docs/OPEN_QUESTIONS.md`](docs/OPEN_QUESTIONS.md) records deferred product questions.
+
+After RC-012, the [local coaching pilot plan](docs/BACKLOG.md#post-m0-pilot) defines RC-013 through RC-020 and the feedback-dependent RC-021. The owner can recruit five volunteers; the university is not involved. See [the recorded planning decisions](docs/DECISIONS.md#post-m0-owner-direction-2026-09-27).
 
 ## Local extension shell
 

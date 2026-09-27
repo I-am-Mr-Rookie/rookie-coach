@@ -184,3 +184,33 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-007 checkpoint; use the Git commit containing this entry as its hash.
+
+## Planning checkpoint 2026-09-27 / PLAN-POST-M0
+Status: DONE
+Objective: Record the owner-requested post-RC-012 run briefs and pilot decisions for future workers.
+Started UTC: 2026-09-27T05:34:25.906Z
+
+Changed:
+- docs/BACKLOG.md — detailed WAITING briefs RC-013 through RC-020 plus feedback-gated RC-021, with activation conditions, dependencies, acceptance, verification, fallbacks and 30-minute checkpoints.
+- docs/DECISIONS.md and docs/OPEN_QUESTIONS.md — accepted outcome, five prospective volunteers, independent project context, delegated implementation choices and genuine future owner gates.
+- docs/PROJECT_STATE.md, docs/project-overview.html and README.md — discoverable links to the future plan and corrected university involvement.
+- docs/RUN_LOG.md — this planning checkpoint; no numbered implementation run was executed.
+
+Verified:
+- `python3 ../check-future-plan.py` — PASS: future task fields/statuses, dependency graph, preservation of RC-001 through RC-012 and existing run log, current next task, and changed-document local link targets.
+- `git diff --check` — PASS: no whitespace errors.
+- `git diff --stat`, `git diff` and `git status --short` — reviewed the seven intended documentation files.
+- Application tests not run: no application code changed.
+
+Assumptions / decisions:
+- User explicitly requested publishing these future instructions while another worker handles the current queue. The planning snapshot starts from main at 7fde748a7f42c53f4224b5ff55ca58ef5094bd51; the update was reapplied onto bfc77c68797a6ab2c914068459f3532e38dfc790 to preserve the concurrent worker's changes. Publication must still recheck main.
+- The five volunteers are a future recruitment target, not enrolled participants or consent to collect data.
+- RC-014 requires an authorized local live check; RC-015 can use synthetic fixtures independently. RC-021 requires actual permitted feedback.
+- RC-019 must be split into children if missing data controls exceed one run. Hosting, paid services, LLMs, other platforms and the permanent license remain deferred.
+
+Remaining / next:
+- Continue the current M0 task named in PROJECT_STATE; after refreshing the snapshot RC-008 is READY.
+- After RC-012 completes, activate RC-013 using the new backlog conditions. No future run is marked complete by this update.
+
+Commit:
+- This entry is committed with the planning update; use the Git commit containing it as its hash.

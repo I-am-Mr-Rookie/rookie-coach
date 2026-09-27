@@ -27,3 +27,7 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 ## Next
 
 RC-008: add account-isolated local evidence storage. Stop after that bounded run.
+
+## Planned next milestone: local coaching pilot
+
+After RC-012, follow [RC-013 through RC-020](BACKLOG.md#post-m0-pilot) to prepare one conservative recurring-mistake diagnosis and one practice action. RC-021 reviews real feedback when available. The owner can recruit five volunteers; individual consent and live validation are still required. This independent project has no supplied university evaluation requirement. These future tasks are WAITING and do not change the current M0 queue.
