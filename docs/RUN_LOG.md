@@ -132,3 +132,28 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-005 checkpoint; use the Git commit containing this entry as its hash.
+
+## Run 2026-09-27 / RC-006
+Status: DONE
+Objective: Iterate a bounded history of one student's Codeforces submission metadata with injectable network access.
+
+Changed:
+- `packages/codeforces/src/index.ts` — async page iterator using 1-based offsets, a configurable 100-record maximum page size, required page cap, two-second request spacing, at most two rate-limit retries, and submission-ID deduplication.
+- `packages/codeforces/src/index.test.ts` — synthetic fixture checks for multiple pages, empty completion, duplicate protection, page cap, spacing, retry exhaustion, and immediate non-rate failure.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — record RC-006 and activate RC-007.
+
+Verified:
+- `npm run typecheck` — PASS for both packages.
+- `npm test` — PASS, five tests.
+- `python3 scripts/check-evidence-fixture.py` — PASS.
+- `git diff --check` — PASS.
+
+Assumptions / decisions:
+- A 100-record maximum and two-second interval are conservative implementation bounds from RC-002, not a documented Codeforces page-size maximum. Short pages continue until empty or the caller's page cap.
+- The caller provides an authorized request function; no live network or student history was used. Rate-limit failures alone retry; other failures propagate.
+
+Remaining / next:
+- RC-007 — user-controlled MV3 extension shell with explicit import action and minimum permissions.
+
+Commit:
+- This entry is committed with the RC-006 checkpoint; use the Git commit containing this entry as its hash.

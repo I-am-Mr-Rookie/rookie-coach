@@ -63,7 +63,7 @@ Acceptance: Using recorded/sanitized API fixtures from RC-002, implement a typed
 Out of scope: No historical loop yet, no live source extraction, no extension UI.
 
 ## RC-006 Historical metadata backfill
-Status: READY
+Status: DONE
 Priority: P06
 Timebox: one run, <= 30 min
 Depends on: RC-005
@@ -75,7 +75,7 @@ Acceptance: Implement pagination/backfill around the verified official API behav
 Out of scope: No source capture, no arbitrary-handle mass collection, no background daemon.
 
 ## RC-007 Chrome MV3 extension shell
-Status: WAITING
+Status: READY
 Priority: P07
 Timebox: one run, <= 30 min
 Depends on: RC-006

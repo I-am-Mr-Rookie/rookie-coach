@@ -77,3 +77,48 @@ export function normalizeStatusPage(response: unknown, account: StudentAccount, 
     };
   });
 }
+
+export interface BackfillOptions {
+  /** Hard cap on requests to distinct offsets; a short page does not imply completion. */
+  maxPages: number;
+  pageSize?: number;
+  /** Defaults to a real two-second timer; inject for deterministic tests. */
+  sleep?: (milliseconds: number) => Promise<void>;
+}
+
+/** Paginate one student's metadata. The caller supplies authorized network access. */
+export async function* backfillStatus(
+  account: StudentAccount,
+  capturedAt: string,
+  request: (from: number, count: number) => Promise<unknown>,
+  options: BackfillOptions,
+): AsyncGenerator<Submission> {
+  const maxPages = integer(options.maxPages, 1);
+  const pageSize = integer(options.pageSize ?? 100, 1);
+  if (pageSize > 100) throw new Error("Codeforces page size must be at most 100");
+  normalizeStatusPage({ status: "OK", result: [] }, account, capturedAt);
+  const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
+  const seen = new Set<string>();
+  let from = 1;
+  let requested = false;
+
+  for (let pageNumber = 0; pageNumber < maxPages; pageNumber++) {
+    let response: unknown;
+    for (let retry = 0; ; retry++) {
+      if (requested) await sleep(2000); // Codeforces permits at most one API call per two seconds.
+      requested = true;
+      response = await request(from, pageSize);
+      const body = object(response);
+      if (body.status !== "FAILED" || body.comment !== "Call limit exceeded" || retry === 2) break;
+    }
+
+    const records = normalizeStatusPage(response, account, capturedAt);
+    if (records.length === 0) return;
+    for (const record of records) {
+      if (seen.has(record.submissionId)) continue;
+      seen.add(record.submissionId);
+      yield record;
+    }
+    from += records.length;
+  }
+}

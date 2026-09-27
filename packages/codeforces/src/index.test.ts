@@ -1,9 +1,15 @@
 import { expect, test } from "vitest";
 import page from "../../../fixtures/codeforces-user-status-page.json";
-import { evidenceVersion, normalizeStatusPage } from "./index.js";
+import { backfillStatus, evidenceVersion, normalizeStatusPage } from "./index.js";
 
 const account = { schemaVersion: 1, platform: "codeforces", namespace: "synthetic-student", handle: "fixture_learner" } as const;
 const capturedAt = "2023-11-15T00:00:00Z";
+
+async function collect<T>(items: AsyncIterable<T>): Promise<T[]> {
+  const result: T[] = [];
+  for await (const item of items) result.push(item);
+  return result;
+}
 
 test("adapter workspace resolves the shared evidence contract", () => {
   expect(evidenceVersion).toBe(1);
@@ -37,4 +43,49 @@ test("preserves missing optional fields and rejects unidentifiable or failed pag
     .toThrow("Call limit exceeded");
   expect(() => normalizeStatusPage({ status: "OK", result: [{ ...minimal.result[0], problem: { index: "A", name: "No key" } }] }, account, capturedAt))
     .toThrow("stable problem identity");
+});
+
+test("backfills multiple pages through an empty page, skipping repeated submission IDs", async () => {
+  const calls: number[] = [];
+  const delays: number[] = [];
+  const older = { ...page.result[1]!, id: 900000000 };
+  const responses = [page, { status: "OK", result: [page.result[1], older] }, { status: "OK", result: [] }];
+  const request = async (from: number, count: number): Promise<unknown> => {
+    expect(count).toBe(2);
+    calls.push(from);
+    return responses[calls.length - 1];
+  };
+  const records = await collect(backfillStatus(account, capturedAt, request, {
+    maxPages: 4, pageSize: 2, sleep: async (ms) => { delays.push(ms); },
+  }));
+  expect(calls).toEqual([1, 3, 5]);
+  expect(delays).toEqual([2000, 2000]);
+  expect(records.map((record) => record.submissionId)).toEqual(["900000002", "900000001", "900000000"]);
+});
+
+test("bounds page count and retries only rate-limit failures", async () => {
+  const calls: number[] = [];
+  const delays: number[] = [];
+  const request = async (from: number): Promise<unknown> => {
+    calls.push(from);
+    return calls.length < 3 ? { status: "FAILED", comment: "Call limit exceeded" } : page;
+  };
+  const records = await collect(backfillStatus(account, capturedAt, request, {
+    maxPages: 1, sleep: async (ms) => { delays.push(ms); },
+  }));
+  expect(calls).toEqual([1, 1, 1]);
+  expect(delays).toEqual([2000, 2000]);
+  expect(records).toHaveLength(2);
+
+  let attempts = 0;
+  await expect(collect(backfillStatus(account, capturedAt, async () => {
+    attempts++;
+    return { status: "FAILED", comment: "Call limit exceeded" };
+  }, { maxPages: 1, sleep: async () => {} }))).rejects.toThrow("Call limit exceeded");
+  expect(attempts).toBe(3);
+  await expect(collect(backfillStatus(account, capturedAt, async () => {
+    attempts++;
+    return { status: "FAILED", comment: "Invalid handle" };
+  }, { maxPages: 1 }))).rejects.toThrow("Invalid handle");
+  expect(attempts).toBe(4);
 });
