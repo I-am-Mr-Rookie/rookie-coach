@@ -20,7 +20,7 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 
 - Codeforces documents own-account API source inclusion, but the authenticated response shape and actual source coverage remain untested. Do not claim live source collection works.
 - No human-only blocker is active. Permanent license and later hosting choices are deferred.
-- RC-003 and RC-004 are on stacked draft PRs; RC-005 builds on RC-004. Merge in dependency order before treating `main` as current.
+- RC-003 through RC-005 are integrated on `main`; the earlier stacked draft PRs are closed.
 
 ## Next
 
