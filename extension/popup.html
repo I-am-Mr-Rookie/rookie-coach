@@ -17,12 +17,16 @@
 </head>
 <body>
   <h1>Rookie Coach</h1>
-  <p>Import only your own Codeforces history, with your permission. Your handle stays in this browser.</p>
+  <p>Import only your own Codeforces history, with your permission. Files and history stay in this browser.</p>
   <form id="import-form">
     <label for="handle">Codeforces handle</label>
     <input id="handle" name="handle" autocomplete="off" required>
+    <label for="metadata">Codeforces user.status JSON</label>
+    <input id="metadata" type="file" accept=".json,application/json" required>
+    <label for="sources">Your source export JSON (optional)</label>
+    <input id="sources" type="file" accept=".json,application/json">
     <button type="submit">Start import</button>
   </form>
-  <p id="status" role="status" aria-live="polite">The import connection is coming in a later run. No data is collected by this shell.</p>
+  <p id="status" role="status" aria-live="polite">Select files from your own account, then start import. No live website connection is used.</p>
 </body>
 </html>

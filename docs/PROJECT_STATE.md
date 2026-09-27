@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-009 — DONE
+Last run: RC-010 — DONE
 
 ## Milestone M0
 
@@ -16,9 +16,10 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 - RC-004 added a minimal TypeScript npm workspace with shared evidence types, a Codeforces package, one cross-package smoke test, and passing typechecks. No live collection exists yet.
 - RC-005 maps one synthetic Codeforces `user.status` metadata page into contract v1 records, leaving source explicitly not collected. No live collection exists yet.
 - RC-006 iterates bounded `user.status` metadata pages with injected requests, two-second spacing, bounded rate-limit retries, and duplicate protection. Fixture tests pass; no live collection exists yet.
-- RC-007 adds a buildable, zero-permission Chrome MV3 popup that saves a configured handle in browser local storage. The explicit Start import action currently stops with an honest no-collection message; integration comes in RC-010.
-- RC-008 adds account-isolated local evidence stores in the core package: IndexedDB for the extension and an in-memory implementation for deterministic tests. Upserts and source/provenance round trips pass against both; no import is connected yet.
-- RC-009 parses an invented, user-prepared source export into account-scoped source evidence, rejecting mismatches and contradictory statuses. The [format](source-export-v1.md) is fixture-only; it does not capture live source or merge into storage yet.
+- RC-007 added a buildable, zero-permission Chrome MV3 popup that saves a configured handle in browser local storage.
+- RC-008 added account-isolated local evidence stores in the core package: IndexedDB for the extension and an in-memory implementation for deterministic tests. Upserts and source/provenance round trips pass against both.
+- RC-009 parses an invented, user-prepared source export into account-scoped source evidence, rejecting mismatches and contradictory statuses. The [format](source-export-v1.md) does not capture live source.
+- RC-010 connects the explicit popup action to a user-selected Codeforces `user.status` JSON page and optional matching source export. It validates before writing, merges source by account and submission ID, preserves separate metadata/source provenance, and stores locally in IndexedDB. The synthetic popup import and failure path pass; no live website request is made.
 
 ## Known gaps and blockers
 
@@ -28,7 +29,7 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 
 ## Next
 
-RC-010: connect the explicit extension import to fixture-backed metadata and local storage, merging matching user-provided source evidence by account and submission ID. Stop after that bounded run.
+RC-011: compute the deterministic evidence summary from locally stored submissions. Stop after that bounded run.
 
 ## Planned next milestone: local coaching pilot
 

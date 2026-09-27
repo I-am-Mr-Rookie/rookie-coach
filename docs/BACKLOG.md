@@ -111,7 +111,7 @@ Acceptance: If RC-002 confirms a normal user-authorized browser route suitable f
 Out of scope: No CAPTCHA solving, no anti-bot bypass, no credential harvesting, no bulk scraping.
 
 ## RC-010 One-student import vertical slice
-Status: READY
+Status: DONE
 Priority: P10
 Timebox: one run, <= 30 min
 Depends on: RC-009
@@ -123,7 +123,7 @@ Acceptance: From one configured handle, a user-triggered import can process fixt
 Out of scope: No scheduler, no continuous background scraping, no other platforms.
 
 ## RC-011 Deterministic evidence summary
-Status: WAITING
+Status: READY
 Priority: P11
 Timebox: one run, <= 30 min
 Depends on: RC-010

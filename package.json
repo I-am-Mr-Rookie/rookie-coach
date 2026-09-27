@@ -5,11 +5,12 @@
   "engines": { "node": ">=22" },
   "workspaces": ["packages/*"],
   "scripts": {
-    "build:extension": "tsc -p extension && node scripts/check-extension.mjs",
+    "build:extension": "tsc -p extension --noEmit && esbuild extension/popup.ts --bundle --format=iife --platform=browser --outfile=extension/dist/popup.js && node scripts/check-extension.mjs",
     "test": "vitest run",
     "typecheck": "tsc -p packages/core && tsc -p packages/codeforces"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "fake-indexeddb": "6.2.5",
     "typescript": "5.9.3",
     "vitest": "4.0.16"

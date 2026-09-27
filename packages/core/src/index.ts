@@ -29,6 +29,9 @@ export interface Submission extends StudentAccount {
   captureMethod: "api" | "saved-page" | "user-export";
   provenance: string;
   capturedAt: string;
+  sourceCaptureMethod?: "saved-page" | "user-export";
+  sourceProvenance?: string;
+  sourceCapturedAt?: string;
 }
 
 export { IndexedDbEvidenceStore, MemoryEvidenceStore, type EvidenceStore } from "./storage.js";

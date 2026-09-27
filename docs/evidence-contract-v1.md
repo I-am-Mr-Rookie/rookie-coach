@@ -41,8 +41,9 @@ The local account identity is `(platform, namespace, handle)`. A later handle ch
 | `captureMethod` | `api`, `saved-page`, or `user-export` | How this evidence was captured. |
 | `provenance` | nonempty string | Specific origin such as `codeforces:user.status` or a user-provided export label; no credentials or private URLs. |
 | `capturedAt` | UTC ISO 8601 string `YYYY-MM-DDTHH:MM:SSZ` | Capture time, separate from submission time. |
+| `sourceCaptureMethod`, `sourceProvenance`, `sourceCapturedAt` | optional source origin fields | When a source export is merged with API metadata, these hold its method, origin and UTC capture time while the main capture fields continue to describe the metadata. |
 
-If source is merged later, update `captureMethod`, `provenance`, and `capturedAt` to describe the source capture; metadata provenance must remain traceable in storage or a later provenance model. Do not claim source availability from a metadata response.
+When source is merged, retain the metadata capture fields and set the separate source origin fields. Do not claim source availability from a metadata response.
 
 ## Fixture envelope
 

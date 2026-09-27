@@ -24,6 +24,8 @@ See the [detailed project overview and run system](docs/project-overview.html), 
 
 After RC-012, the [local coaching pilot plan](docs/BACKLOG.md#post-m0-pilot) defines RC-013 through RC-020 and the feedback-dependent RC-021. The owner can recruit five volunteers; the university is not involved. See [the recorded planning decisions](docs/DECISIONS.md#post-m0-owner-direction-2026-09-27).
 
-## Local extension shell
+## Local extension import
 
-Run `npm ci && npm run build:extension`, then open `chrome://extensions`, enable Developer mode, and choose **Load unpacked** with the `extension/` directory. The popup saves a Codeforces handle locally. Its Start import button currently saves the handle and reports that no history was collected; the actual import is scheduled for RC-010.
+Run `npm ci && npm run build:extension`, then open `chrome://extensions`, enable Developer mode, and choose **Load unpacked** with the `extension/` directory. Enter your own Codeforces handle, select a JSON response from the official `user.status` method for that account, optionally select a [user-prepared source export](docs/source-export-v1.md) with the same handle and `local-student` namespace, then press **Start import**. The popup imports that one selected metadata page to browser-local IndexedDB. It makes no network request and does not verify ownership of the selected file; only import your own history with permission.
+
+For a synthetic metadata-only check, use handle `fixture_learner` and select `fixtures/codeforces-user-status-page.json`; the popup should report two stored submissions. The source fixture uses a different synthetic namespace for parser tests; change its `account.namespace` to `local-student` in a local copy if testing the optional source field manually. No real history or source belongs in this repository. The report is scheduled for RC-012.

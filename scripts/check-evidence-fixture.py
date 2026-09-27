@@ -15,6 +15,7 @@ SUBMISSION = ACCOUNT | {
     "submissionId", "problem", "verdict", "language", "submittedAt", "source",
     "sourceStatus", "captureMethod", "provenance", "capturedAt",
 }
+SOURCE_ORIGIN = {"sourceCaptureMethod", "sourceProvenance", "sourceCapturedAt"}
 
 
 def require(condition, message):
@@ -45,7 +46,7 @@ def validate(data):
     require(isinstance(data["submissions"], list), "submissions must be an array")
     seen = set()
     for submission in data["submissions"]:
-        fields(submission, SUBMISSION)
+        fields(submission, SUBMISSION, SOURCE_ORIGIN)
         require(type(submission["schemaVersion"]) is int and submission["schemaVersion"] == 1, "submission version")
         require(all(submission[k] == account[k] for k in ("platform", "namespace", "handle")), "account mismatch")
         require(nonempty(submission["submissionId"]), "submission ID")
@@ -79,6 +80,15 @@ def validate(data):
             datetime.strptime(captured, "%Y-%m-%dT%H:%M:%SZ")
         except ValueError as exc:
             raise ValueError("capture time must be UTC ISO 8601 seconds") from exc
+        if SOURCE_ORIGIN & submission.keys():
+            require(SOURCE_ORIGIN <= submission.keys(), "incomplete source origin")
+            require(submission["sourceStatus"] != "not-collected", "source origin without source evidence")
+            require(submission["sourceCaptureMethod"] in ("saved-page", "user-export"), "source capture method")
+            require(nonempty(submission["sourceProvenance"]), "source provenance")
+            try:
+                datetime.strptime(submission["sourceCapturedAt"], "%Y-%m-%dT%H:%M:%SZ")
+            except (ValueError, TypeError) as exc:
+                raise ValueError("source capture time must be UTC ISO 8601 seconds") from exc
 
 
 if __name__ == "__main__":
