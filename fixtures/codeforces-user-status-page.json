@@ -1,0 +1,35 @@
+{
+  "status": "OK",
+  "result": [
+    {
+      "id": 900000002,
+      "contestId": 999999,
+      "creationTimeSeconds": 1700001000,
+      "problem": {
+        "contestId": 999999,
+        "index": "A",
+        "name": "Synthetic Sum",
+        "type": "PROGRAMMING",
+        "rating": 800,
+        "tags": ["implementation"]
+      },
+      "programmingLanguage": "GNU C++20",
+      "verdict": "OK"
+    },
+    {
+      "id": 900000001,
+      "contestId": 999999,
+      "creationTimeSeconds": 1700000000,
+      "problem": {
+        "contestId": 999999,
+        "index": "A",
+        "name": "Synthetic Sum",
+        "type": "PROGRAMMING",
+        "rating": 800,
+        "tags": ["implementation"]
+      },
+      "programmingLanguage": "GNU C++20",
+      "verdict": "WRONG_ANSWER"
+    }
+  ]
+}

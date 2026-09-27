@@ -105,3 +105,30 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-004 checkpoint; use the Git commit containing this entry as its hash.
+
+## Run 2026-09-27 / RC-005
+Status: DONE
+Objective: Normalize one Codeforces `user.status` metadata page into version 1 evidence records.
+
+Changed:
+- `packages/codeforces/src/index.ts` — validates the relevant API shape, maps account and problem fields, and records source as `not-collected`.
+- `fixtures/codeforces-user-status-page.json` — invented metadata matching documented `user.status` fields; no student history or source.
+- `packages/codeforces/src/index.test.ts` — checks IDs, problem, verdict, language, time, absent fields, and failed responses.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — record completion and activate RC-006.
+
+Verified:
+- `npm run typecheck` — PASS for both packages.
+- `npm test` — PASS, three tests.
+- `python3 scripts/check-evidence-fixture.py` — PASS.
+- `python3 -m json.tool fixtures/codeforces-user-status-page.json` — PASS.
+- `git diff --check` — PASS.
+
+Assumptions / decisions:
+- An API metadata page cannot establish source availability; even if extra source fields appear, this adapter leaves source null and status `not-collected`.
+- A problem without a contest ID uses its documented problemset name; without either stable key, the adapter rejects the page rather than conflating problems.
+
+Remaining / next:
+- RC-006 — bounded historical metadata paging with injectable network access and deterministic fixtures.
+
+Commit:
+- This entry is committed with the RC-005 checkpoint; use the Git commit containing this entry as its hash.

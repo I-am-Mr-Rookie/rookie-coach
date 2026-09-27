@@ -51,7 +51,7 @@ Acceptance: Initialize npm workspaces with a small shared/core package and Codef
 Out of scope: No backend, no Railway, no UI framework, no database server.
 
 ## RC-005 Codeforces metadata adapter
-Status: READY
+Status: DONE
 Priority: P05
 Timebox: one run, <= 30 min
 Depends on: RC-004
@@ -63,7 +63,7 @@ Acceptance: Using recorded/sanitized API fixtures from RC-002, implement a typed
 Out of scope: No historical loop yet, no live source extraction, no extension UI.
 
 ## RC-006 Historical metadata backfill
-Status: WAITING
+Status: READY
 Priority: P06
 Timebox: one run, <= 30 min
 Depends on: RC-005
