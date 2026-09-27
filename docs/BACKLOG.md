@@ -221,7 +221,7 @@ Fallback / checkpoint: Support one existing source representation only. If a par
 Out of scope: No execution of student code, language-wide static analyzer, LLM, cloud service or live import.
 
 ## RC-016 One conservative recurring-mistake rule
-Status: READY
+Status: DONE
 Priority: P16
 Timebox: one run, <= 30 min
 Depends on: RC-015
@@ -241,7 +241,7 @@ Fallback / checkpoint: If no candidate can pass a meaningful counterexample test
 Out of scope: No broad weakness score, comprehensive bug detection, inferred topic mastery or personalized curriculum.
 
 ## RC-017 One practice action per supported diagnosis
-Status: WAITING
+Status: READY
 Priority: P17
 Timebox: one run, <= 30 min
 Depends on: RC-016

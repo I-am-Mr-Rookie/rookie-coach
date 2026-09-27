@@ -457,3 +457,37 @@ Verified:
 - `git diff --check` — PASS.
 
 Next: Merge PR #7 after rechecking its head and base. RC-016 remains the next implementation run; RC-014 remains WAITING for consent.
+
+## Run 2026-09-27 / RC-016
+Status: DONE
+Objective: Test one conservative recurring loop-bound edit pattern on synthetic Codeforces evidence.
+Started UTC: 2026-09-27T07:41:55Z (first recorded shell step).
+
+Acceptance checks:
+- Two distinct qualifying GNU C++20 problems yield one possible-pattern finding with a stable rule ID, supporting submission IDs and capture origins.
+- Benign comments/raw strings, another source edit, one problem, missing source/origin and unsupported language abstain with a coverage reason.
+- The serialized finding does not assert a failure's cause; typechecks and the existing test/build path pass.
+
+Changed:
+- `packages/core/src/diagnosis.ts`, `packages/core/src/index.ts` — deterministic two-problem rule using existing account-validated adjacent comparisons and a tightly scoped textual loop edit. No parser, source execution or added dependency.
+- `packages/core/src/diagnosis.test.ts` — synthetic positive case and abstentions; observed RED for missing implementation and again for block-comment/raw-string false positives before narrowing the rule.
+- `docs/research/recurring-boundary-rule.md` — match contract, counterexamples, limitations and wording.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — close RC-016 and ready RC-017; RC-014 remains consent-gated.
+
+Verified:
+- `timeout 120s npx vitest run packages/core/src/diagnosis.test.ts` — PASS, five tests after the RED checks.
+- `timeout 120s npm test` — PASS, 22 tests across six files.
+- `timeout 120s npm run typecheck` — PASS, core and Codeforces packages.
+- `timeout 120s npm run build:extension` — PASS, TypeScript, bundle, MV3 and synthetic popup-to-report flow.
+- `git diff --check` — PASS.
+- Live collection and real-browser manual load — not run; outside RC-016.
+
+Assumptions / decisions:
+- The supported form is intentionally narrower than arbitrary C++: simple single-line loop and identifier bound; sources with block-comment or raw-string markers abstain. The returned reason names one coverage obstacle, not exhaustive history.
+- The finding is a possible repeated source edit, not proof of the original wrong-answer causes. At least two distinct problems are required; no real student data was used.
+
+Remaining / next:
+- RC-017 — one self-contained practice action for the supported rule. RC-014 remains WAITING for explicit own-account permission and a local live check.
+
+Commit:
+- This entry is committed with the RC-016 checkpoint; use the Git commit containing it as its hash.
