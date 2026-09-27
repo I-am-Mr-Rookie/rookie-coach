@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-002 — RESEARCH_COMPLETE
+Last run: RC-003 — DONE
 
 ## Milestone M0
 
@@ -12,7 +12,7 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 - The public repository contains project context and the autonomous runbook.
 - RC-001 seeded agent instructions, state, decisions, backlog, and run log.
 - RC-002 documented current Codeforces submission metadata, pagination/rate behavior, and own-account `includeSources` in [the access research](research/codeforces-data-access.md).
-- No application code or data collection exists yet.
+- RC-003 added the [version 1 evidence contract](evidence-contract-v1.md), a synthetic Codeforces fixture, and a standard-library fixture validator. No application integration or real data collection exists yet.
 
 ## Known gaps and blockers
 
@@ -21,4 +21,4 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 
 ## Next
 
-RC-003: define the normalized evidence contract and a synthetic Codeforces fixture. Stop after that bounded run.
+RC-004: create the minimal TypeScript workspace and smoke checks around the version 1 contract. Stop after that bounded run.

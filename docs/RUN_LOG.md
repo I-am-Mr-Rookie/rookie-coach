@@ -53,3 +53,29 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-002 research checkpoint; use the Git commit containing this entry as its hash.
+
+## Run 2026-09-27 / RC-003
+Status: DONE
+Objective: Define versioned, account-scoped evidence records and a synthetic Codeforces example before adapters.
+
+Changed:
+- `docs/evidence-contract-v1.md` — strict StudentAccount, ProblemRef, Submission, and fixture-envelope field contracts, including nullable source/status and capture provenance.
+- `fixtures/codeforces-evidence-v1.json` — invented two-attempt metadata example; no student history or credentials.
+- `scripts/check-evidence-fixture.py` — dependency-free deterministic shape and invariant validation.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — record completion and activate RC-004.
+
+Verified:
+- `python3 scripts/check-evidence-fixture.py` — PASS: fixture conforms to contract v1.
+- `python3 -m json.tool fixtures/codeforces-evidence-v1.json` — PASS: JSON parses.
+- Targeted negative mutation check — PASS: source/status mismatch rejected.
+- `git diff --cached --check` and `git status --short` — PASS: expected files only, no whitespace errors.
+
+Assumptions / decisions:
+- Strict documented contracts are the versioned representation for this run; RC-004 can add TypeScript types without a JSON Schema validator dependency.
+- `not-collected` means metadata alone makes no source availability claim. Fixture IDs and handle are synthetic.
+
+Remaining / next:
+- RC-004 — minimal TypeScript workspace, shared/core and Codeforces packages, smoke test and typecheck.
+
+Commit:
+- This entry is committed with the RC-003 checkpoint; use the Git commit containing this entry as its hash.

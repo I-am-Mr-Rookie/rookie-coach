@@ -27,7 +27,7 @@ Acceptance: Create docs/research/codeforces-data-access.md . Verify, from author
 Out of scope: No scraping bypass, no credentials, no broad multi-platform research, no production crawler.
 
 ## RC-003 Normalized evidence contract
-Status: READY
+Status: DONE
 Priority: P03
 Timebox: one run, <= 30 min
 Depends on: RC-002
@@ -39,7 +39,7 @@ Acceptance: Add versioned JSON schemas (or equivalently strict documented contra
 Out of scope: No LLM schema, no recommendation engine, no cloud database.
 
 ## RC-004 Minimal TypeScript workspace
-Status: WAITING
+Status: READY
 Priority: P04
 Timebox: one run, <= 30 min
 Depends on: RC-003

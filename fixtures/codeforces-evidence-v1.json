@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "account": {
+    "schemaVersion": 1,
+    "platform": "codeforces",
+    "namespace": "synthetic-student",
+    "handle": "fixture_learner"
+  },
+  "submissions": [
+    {
+      "schemaVersion": 1,
+      "platform": "codeforces",
+      "namespace": "synthetic-student",
+      "handle": "fixture_learner",
+      "submissionId": "900000001",
+      "problem": {
+        "platform": "codeforces",
+        "problemId": "contest:999999/A",
+        "name": "Synthetic Sum",
+        "contestId": 999999,
+        "index": "A",
+        "difficulty": 800,
+        "tags": ["implementation"]
+      },
+      "verdict": "WRONG_ANSWER",
+      "language": "GNU C++20",
+      "submittedAt": 1700000000,
+      "source": null,
+      "sourceStatus": "not-collected",
+      "captureMethod": "api",
+      "provenance": "codeforces:user.status (synthetic fixture)",
+      "capturedAt": "2023-11-15T00:00:00Z"
+    },
+    {
+      "schemaVersion": 1,
+      "platform": "codeforces",
+      "namespace": "synthetic-student",
+      "handle": "fixture_learner",
+      "submissionId": "900000002",
+      "problem": {
+        "platform": "codeforces",
+        "problemId": "contest:999999/A",
+        "name": "Synthetic Sum",
+        "contestId": 999999,
+        "index": "A",
+        "difficulty": 800,
+        "tags": ["implementation"]
+      },
+      "verdict": "OK",
+      "language": "GNU C++20",
+      "submittedAt": 1700001000,
+      "source": null,
+      "sourceStatus": "not-collected",
+      "captureMethod": "api",
+      "provenance": "codeforces:user.status (synthetic fixture)",
+      "capturedAt": "2023-11-15T00:00:00Z"
+    }
+  ]
+}
