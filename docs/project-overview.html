@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Detailed project overview and handoff for Rookie Coach, an open-source competitive programming coaching platform." />
+  <title>Rookie Coach — Detailed Project Overview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08101f;
+      --bg-2: #0d1730;
+      --panel: #111d36;
+      --panel-2: #162440;
+      --text: #edf3ff;
+      --muted: #aab8d5;
+      --line: #2b3d66;
+      --accent: #7ea5ff;
+      --accent-2: #64dfc0;
+      --warning: #ffd274;
+      --danger: #ff9a9a;
+      --shadow: 0 18px 48px rgba(0,0,0,.28);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% -8%, rgba(126,165,255,.20), transparent 32%),
+        radial-gradient(circle at 90% 2%, rgba(100,223,192,.10), transparent 25%),
+        var(--bg);
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code {
+      padding: .08rem .35rem;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #07101f;
+      color: #cddcff;
+    }
+    pre {
+      margin: 16px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #07101f;
+      color: #cedcff;
+      line-height: 1.5;
+    }
+
+    .wrap { width: min(var(--max), calc(100% - 34px)); margin: 0 auto; }
+
+    .hero {
+      padding: 70px 0 44px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent-2);
+      background: rgba(100,223,192,.06);
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(2.5rem, 7vw, 5.5rem);
+      line-height: 1;
+      letter-spacing: -.045em;
+    }
+    .lead {
+      max-width: 900px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 32px;
+    }
+    .summary-item {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: rgba(17,29,54,.78);
+      box-shadow: var(--shadow);
+    }
+    .summary-item strong { display: block; margin-bottom: 3px; }
+    .summary-item span { color: var(--muted); font-size: .9rem; }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8,16,31,.88);
+      backdrop-filter: blur(14px);
+    }
+    .toc-inner {
+      display: flex;
+      gap: 9px;
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+    .toc a {
+      flex: 0 0 auto;
+      padding: 7px 11px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+    .toc a:hover { border-color: var(--line); color: var(--text); text-decoration: none; }
+
+    main { padding: 44px 0 80px; }
+    section { margin-bottom: 22px; }
+    .card {
+      padding: clamp(20px, 3vw, 32px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(22,36,64,.94), rgba(17,29,54,.94));
+      box-shadow: var(--shadow);
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      letter-spacing: -.025em;
+    }
+    h3 { margin: 26px 0 8px; font-size: 1.14rem; }
+    p { margin: 10px 0; }
+    .muted { color: var(--muted); }
+
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .mini {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(8,16,31,.36);
+    }
+    .mini h3 { margin-top: 0; }
+
+    ul, ol { padding-left: 22px; }
+    li + li { margin-top: 7px; }
+
+    .callout {
+      margin: 18px 0;
+      padding: 15px 17px;
+      border-left: 4px solid var(--accent);
+      border-radius: 11px;
+      background: rgba(126,165,255,.08);
+    }
+    .callout.good { border-left-color: var(--accent-2); background: rgba(100,223,192,.08); }
+    .callout.warn { border-left-color: var(--warning); background: rgba(255,210,116,.08); }
+    .callout.danger { border-left-color: var(--danger); background: rgba(255,154,154,.07); }
+
+    .pill {
+      display: inline-block;
+      margin: 4px 5px 4px 0;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap: 9px;
+      margin-top: 18px;
+    }
+    .flow > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 86px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(8,16,31,.42);
+      text-align: center;
+      font-size: .88rem;
+    }
+
+    .table-wrap { overflow-x: auto; margin-top: 15px; }
+    table { width: 100%; border-collapse: collapse; min-width: 680px; }
+    th, td {
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: rgba(126,165,255,.08); color: var(--text); }
+    td { color: var(--muted); }
+
+    .principle {
+      font-size: 1.03rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    footer {
+      padding: 28px 0 42px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      text-align: center;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid, .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .summary-grid, .grid-3 { grid-template-columns: 1fr; }
+      .hero { padding-top: 44px; }
+      .wrap { width: min(var(--max), calc(100% - 22px)); }
+      .card { padding: 18px; }
+    }
+
+    @media print {
+      :root { color-scheme: light; }
+      body { background: white; color: #111827; }
+      .toc { display: none; }
+      .card, .summary-item { box-shadow: none; background: white; border-color: #d6dbe6; }
+      .muted, .summary-item span, td { color: #475569; }
+      .hero { padding-top: 20px; }
+      section { break-inside: avoid-page; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <span class="eyebrow">University Project · Open Source · Discovery Phase</span>
+      <h1>Rookie Coach</h1>
+      <p class="lead">
+        A competitive-programming coaching platform that learns from a student's real submission history,
+        identifies recurring weaknesses, and turns those patterns into concrete guidance, practice, and long-term progress tracking.
+      </p>
+
+      <div class="summary-grid">
+        <div class="summary-item"><strong>Primary audience</strong><span>Competitive-programming beginners and early-stage university students</span></div>
+        <div class="summary-item"><strong>Collection layer</strong><span>Browser extension plus platform-specific adapters</span></div>
+        <div class="summary-item"><strong>Core product</strong><span>Evidence-based personalized coaching, not just an LLM chat wrapper</span></div>
+        <div class="summary-item"><strong>Distribution</strong><span>Open-source local use plus a possible Railway-hosted service</span></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Project sections">
+    <div class="wrap toc-inner">
+      <a href="#executive-summary">Summary</a>
+      <a href="#problem">Problem</a>
+      <a href="#vision">Vision</a>
+      <a href="#users">Users</a>
+      <a href="#collection">Collection</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#mvp">MVP</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#evaluation">Evaluation</a>
+      <a href="#business">Business</a>
+      <a href="#questions">Questions</a>
+      <a href="#handoff">Handoff</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section id="executive-summary" class="card">
+      <h2>1. Executive Summary</h2>
+      <p>
+        Rookie Coach is intended to become a full competitive-programming guidance system built around the student's own evidence.
+        Instead of asking a beginner to remember and describe their weaknesses, the system should inspect a longitudinal history of submissions,
+        failed attempts, accepted solutions, problem difficulty, contest context, and code changes to discover patterns the student may not notice independently.
+      </p>
+      <p>
+        The browser extension is primarily the data-collection layer. Its purpose is to help the student import their own competitive-programming history,
+        with explicit permission, from supported platforms such as Codeforces, AtCoder, CodeChef, LeetCode, and potentially others.
+        The real product is the coaching system built on top of the collected history.
+      </p>
+      <div class="callout good">
+        <span class="principle">Working thesis:</span> personalized feedback becomes more useful when it is grounded in the student's actual attempts and recurring mistakes rather than generic topic lists or generic AI advice.
+      </div>
+    </section>
+
+    <section id="problem" class="card">
+      <h2>2. The Problem</h2>
+      <p>
+        A typical beginner watches tutorials, follows a bootcamp or roadmap, solves some easy problems, and starts entering contests.
+        Their rating can improve before their fundamentals become consistent. They may know several techniques superficially while repeatedly making the same implementation mistakes,
+        misunderstanding edge cases, choosing poor approaches, or avoiding unfamiliar topics.
+      </p>
+      <p>
+        Existing competitive-programming platforms retain pieces of this history, but the student usually sees it as a sequence of isolated submissions.
+        Rookie Coach should turn that fragmented history into a structured learning loop.
+      </p>
+
+      <div class="grid-3">
+        <div class="mini">
+          <h3>Fragmented evidence</h3>
+          <p class="muted">Attempts are spread across multiple platforms, contests, problem archives, and accounts.</p>
+        </div>
+        <div class="mini">
+          <h3>Weak reflection</h3>
+          <p class="muted">Students often move to the next problem without systematically reviewing why previous attempts failed.</p>
+        </div>
+        <div class="mini">
+          <h3>Generic practice</h3>
+          <p class="muted">A random problem list cannot automatically explain which weaknesses a specific student needs to address.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="vision" class="card">
+      <h2>3. Product Vision</h2>
+      <p>
+        The long-term product should feel more like a persistent competitive-programming mentor than a one-shot chatbot.
+        It should remember what the student has struggled with, recognize repeated patterns, explain those patterns in understandable language,
+        and change its recommendations as the student's skills evolve.
+      </p>
+
+      <h3>Candidate coaching capabilities</h3>
+      <ul>
+        <li>Detect recurring implementation mistakes across many submissions.</li>
+        <li>Identify topics that appear missing, weak, or inconsistently applied.</li>
+        <li>Compare failed and accepted attempts for the same problem.</li>
+        <li>Generate post-contest reviews based on the student's actual decisions.</li>
+        <li>Recommend the next problems for a reason that can be explained to the student.</li>
+        <li>Track whether previously identified weaknesses are improving.</li>
+        <li>Build a personalized learning plan that adapts over time.</li>
+      </ul>
+
+      <div class="callout warn">
+        These are product directions, not finalized requirements. The first version should deliberately solve one narrow coaching problem well.
+      </div>
+    </section>
+
+    <section id="users" class="card">
+      <h2>4. Target Users</h2>
+      <div class="grid-2">
+        <div class="mini">
+          <h3>Primary persona</h3>
+          <p>
+            A university student who has already started competitive programming and has accumulated enough submissions to reveal useful patterns,
+            but is still early enough that structured feedback can change how they practice.
+          </p>
+          <span class="pill">Beginner</span>
+          <span class="pill">University student</span>
+          <span class="pill">Contest participant</span>
+          <span class="pill">Has submission history</span>
+        </div>
+        <div class="mini">
+          <h3>Example skill range</h3>
+          <p>
+            A Codeforces rating around roughly 800–1000 was discussed as an example of the kind of beginner being considered.
+            It should not be treated as a hard eligibility rule until the target population is defined more carefully.
+          </p>
+          <span class="pill">Example only</span>
+          <span class="pill">Not a fixed cutoff</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="collection" class="card">
+      <h2>5. Data Collection Layer</h2>
+      <p>
+        The initial concept uses a Chrome extension installed by the student. With explicit permission, the extension would collect the student's own submissions and source code
+        where the platform technically allows access and where the chosen integration approach is compatible with applicable platform rules.
+      </p>
+
+      <div class="flow" aria-label="Collection workflow">
+        <div>1. Student installs extension</div>
+        <div>2. Student links a platform account</div>
+        <div>3. Extension collects authorized history</div>
+        <div>4. Data is normalized into a common format</div>
+        <div>5. Coaching pipeline analyzes the history</div>
+      </div>
+
+      <h3>Candidate platforms</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Platform</th><th>Why it matters</th><th>What still needs investigation</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Codeforces</td><td>Strong fit for university contests, ratings, and beginner progression.</td><td>Current source-code access, authentication, API limits, browser-session behavior, and platform rules.</td></tr>
+            <tr><td>AtCoder</td><td>Excellent contest structure and high-quality problem archive.</td><td>Submission-history access and the most reliable collection method.</td></tr>
+            <tr><td>CodeChef</td><td>Relevant to many university students and contest communities.</td><td>Available APIs, source retrieval, rate limits, and account-linking options.</td></tr>
+            <tr><td>LeetCode</td><td>May add useful algorithm-practice history outside contest platforms.</td><td>Whether its data model and user goals fit the same coaching pipeline.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout danger">
+        <strong>Do not assume API capabilities.</strong> Every platform must be researched independently before implementation.
+        Official APIs may expose metadata without source code, and browser-based access may have different authentication, rate-limit, privacy, or terms-of-use implications.
+      </div>
+
+      <h3>Conceptual normalized submission schema</h3>
+      <pre><code>Submission {
+  platform
+  user_handle
+  submission_id
+  problem_id
+  contest_id
+  submitted_at
+  language
+  verdict
+  runtime
+  memory
+  source_code
+  source_hash
+  problem_tags[]
+  problem_difficulty
+  attempt_number
+  platform_metadata
+}</code></pre>
+      <p class="muted">This schema is only a discussion starting point, not a final database contract.</p>
+    </section>
+
+    <section id="analysis" class="card">
+      <h2>6. Analysis and Coaching Layer</h2>
+      <p>
+        A useful architecture should separate facts that can be extracted reliably from code and metadata from higher-level interpretation.
+        The system should not rely on an LLM to invent facts that deterministic analysis can calculate directly.
+      </p>
+
+      <div class="grid-3">
+        <div class="mini">
+          <h3>Deterministic signals</h3>
+          <ul>
+            <li>Verdict frequency</li>
+            <li>Attempt counts</li>
+            <li>Time between attempts</li>
+            <li>Language/template usage</li>
+            <li>Submission diffs</li>
+            <li>Difficulty progression</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Program analysis</h3>
+          <ul>
+            <li>AST-level structure</li>
+            <li>Complexity indicators</li>
+            <li>Common bug patterns</li>
+            <li>Suspicious constructs</li>
+            <li>Algorithmic-pattern recognition</li>
+            <li>Implementation-style drift</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>LLM-assisted interpretation</h3>
+          <ul>
+            <li>Explain findings in plain language</li>
+            <li>Summarize contest performance</li>
+            <li>Connect code patterns to concepts</li>
+            <li>Generate study guidance</li>
+            <li>Produce reflection questions</li>
+            <li>Write personalized reports</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout good">
+        <span class="principle">Design principle:</span> extract first, reason second, generate last. Structured evidence should exist before a model is asked to interpret it.
+      </div>
+    </section>
+
+    <section id="architecture" class="card">
+      <h2>7. Candidate System Architecture</h2>
+      <p class="muted">This architecture is intentionally provisional. It is a useful starting point, not a locked technology decision.</p>
+
+      <pre><code>┌──────────────────────────────┐
+│ Browser Extension            │
+│ - account linking            │
+│ - permission management      │
+│ - platform data collection   │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Platform Adapter Layer       │
+│ - Codeforces adapter         │
+│ - AtCoder adapter            │
+│ - CodeChef adapter           │
+│ - LeetCode adapter           │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Normalization Layer          │
+│ - common submission schema   │
+│ - deduplication              │
+│ - data validation            │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Storage                      │
+│ - local-first option         │
+│ - optional hosted database   │
+│ - source-code privacy rules  │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Analysis Pipeline            │
+│ - metadata analytics         │
+│ - code analysis              │
+│ - attempt comparison         │
+│ - skill/topic inference      │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│ Coaching Layer               │
+│ - reports                    │
+│ - recommendations            │
+│ - study plans                │
+│ - progress tracking          │
+└──────────────────────────────┘</code></pre>
+
+      <h3>Possible monorepo shape</h3>
+      <pre><code>rookie-coach/
+├─ apps/
+│  ├─ extension/
+│  └─ web/
+├─ services/
+│  ├─ api/
+│  └─ analysis/
+├─ packages/
+│  ├─ platform-adapters/
+│  ├─ shared-types/
+│  └─ coaching-core/
+├─ docs/
+├─ infra/
+└─ tests/</code></pre>
+      <p class="muted">
+        A monorepo could make collaboration convenient, but the final stack and directory structure should follow the first real MVP rather than being decided for aesthetic reasons.
+      </p>
+    </section>
+
+    <section id="privacy" class="card">
+      <h2>8. Privacy, Consent, and Security</h2>
+      <p>
+        Competitive-programming source code can be personal academic work, and browser extensions operate in a security-sensitive environment.
+        Data ownership and consent therefore need to be part of the product architecture from the beginning.
+      </p>
+      <ul>
+        <li>Collect only data the student explicitly authorizes.</li>
+        <li>Explain which platforms, pages, and data categories the extension accesses.</li>
+        <li>Request the minimum browser permissions necessary.</li>
+        <li>Provide a clear way to disconnect accounts and delete imported data.</li>
+        <li>Avoid collecting platform passwords.</li>
+        <li>Handle cookies, session tokens, or other authentication material only when strictly necessary and with a deliberate security design.</li>
+        <li>Keep secrets out of the browser bundle and out of the Git repository.</li>
+        <li>Clearly distinguish data that stays local from data uploaded to a hosted service.</li>
+        <li>Document retention, deletion, and export behavior.</li>
+      </ul>
+      <div class="callout warn">
+        A local-first default could become a major trust advantage for an open-source project, but it remains a product and architecture decision to validate rather than assume.
+      </div>
+    </section>
+
+    <section id="mvp" class="card">
+      <h2>9. MVP Strategy</h2>
+      <p>
+        The first version should prove one complete learning loop. Supporting every platform and every kind of coaching at once would make it difficult to tell whether the core idea actually works.
+      </p>
+
+      <h3>A useful first end-to-end loop</h3>
+      <ol>
+        <li>Support one competitive-programming platform.</li>
+        <li>Import a real student's historical submissions.</li>
+        <li>Normalize accepted and failed attempts.</li>
+        <li>Analyze one or two categories of recurring weakness.</li>
+        <li>Produce a coaching report backed by specific evidence.</li>
+        <li>Give the student a small set of next actions or practice problems.</li>
+        <li>Measure whether the student considers the diagnosis accurate and useful.</li>
+      </ol>
+
+      <h3>Candidate first coaching outcomes</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Outcome</th><th>Why it fits the project</th><th>Main challenge</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Recurring mistake diagnosis</td><td>Directly exploits failed attempts and source-code history.</td><td>Findings must be accurate enough that students trust them.</td></tr>
+            <tr><td>Topic-gap detection</td><td>Easy to explain and useful for planning practice.</td><td>Must infer more than what problem tags already say.</td></tr>
+            <tr><td>Next-problem recommendation</td><td>Creates a continuous coaching loop.</td><td>Recommendations need clear personalization logic.</td></tr>
+            <tr><td>Contest review</td><td>Naturally bounded and easy to demonstrate.</td><td>Needs enough timing and attempt context to explain decisions.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="roadmap" class="card">
+      <h2>10. Candidate Roadmap</h2>
+      <div class="grid-2">
+        <div class="mini">
+          <h3>Phase 0 — Discovery</h3>
+          <ul>
+            <li>Select the first platform.</li>
+            <li>Select the first measurable coaching outcome.</li>
+            <li>Verify the platform's actual data-access path.</li>
+            <li>Define local-versus-hosted data boundaries.</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Phase 1 — Collection prototype</h3>
+          <ul>
+            <li>Create the extension skeleton.</li>
+            <li>Link one user account.</li>
+            <li>Import and normalize submission history.</li>
+            <li>Store data safely.</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Phase 2 — Coaching prototype</h3>
+          <ul>
+            <li>Implement the first analysis pipeline.</li>
+            <li>Generate evidence-backed findings.</li>
+            <li>Create a student-facing report.</li>
+            <li>Test with a small university cohort.</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Phase 3 — Hosted product</h3>
+          <ul>
+            <li>Deploy services on Railway or another chosen platform.</li>
+            <li>Add user accounts if required.</li>
+            <li>Add additional competitive-programming platforms.</li>
+            <li>Explore a sustainable monetization model.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="evaluation" class="card">
+      <h2>11. Evaluation for the University Project</h2>
+      <p>
+        The university version should include a defensible evaluation method. Rating change alone is noisy and may require too much time,
+        so the project can measure several shorter-term indicators of coaching quality.
+      </p>
+      <ul>
+        <li><strong>Diagnosis agreement:</strong> do students recognize the weaknesses identified by the system?</li>
+        <li><strong>Actionability:</strong> do students know what to practice after reading the report?</li>
+        <li><strong>Repeated-error reduction:</strong> do previously identified mistake categories appear less often?</li>
+        <li><strong>Practice efficiency:</strong> do students need fewer failed attempts on related problems?</li>
+        <li><strong>Retention:</strong> can students solve related problems later without the same type of hint?</li>
+        <li><strong>Qualitative usefulness:</strong> do students consider the system more useful than a generic problem recommendation list?</li>
+      </ul>
+    </section>
+
+    <section id="business" class="card">
+      <h2>12. Open Source, Hosting, and Business Direction</h2>
+      <p>
+        The project is intended to be open source so that anyone can download it, inspect the code, and run it locally.
+        At the same time, a hosted version may be deployed on Railway to provide a lower-friction option for students who do not want to self-host.
+      </p>
+      <div class="grid-2">
+        <div class="mini">
+          <h3>Open-source version</h3>
+          <ul>
+            <li>Transparent data handling</li>
+            <li>Community contributions</li>
+            <li>University collaboration</li>
+            <li>Local/private use</li>
+            <li>Reproducible research and demos</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Potential hosted version</h3>
+          <ul>
+            <li>No local setup required</li>
+            <li>Managed analysis infrastructure</li>
+            <li>Cross-device history</li>
+            <li>Potential premium features</li>
+            <li>Possible subscription model</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout warn">
+        Monetization is intentionally undecided. The immediate priority is proving that the data pipeline and coaching loop are useful before deciding what should be paid, hosted, or free.
+      </div>
+    </section>
+
+    <section id="questions" class="card">
+      <h2>13. High-Impact Open Questions</h2>
+      <ol>
+        <li><strong>First outcome:</strong> after collecting a student's history, what is the single most valuable thing version 1 should do?</li>
+        <li><strong>First platform:</strong> which platform should be supported completely before adding another?</li>
+        <li><strong>Historical depth:</strong> must version 1 import all past submissions, or can it begin from recent history?</li>
+        <li><strong>Data scope:</strong> source code only, or source + verdicts + problem metadata + contest context + problem statements?</li>
+        <li><strong>Storage:</strong> should source code stay local by default, upload only after opt-in, or use another model?</li>
+        <li><strong>Identity linking:</strong> how should a student prove ownership of handles across multiple platforms?</li>
+        <li><strong>Analysis split:</strong> what belongs in deterministic/static analysis and what genuinely benefits from an LLM?</li>
+        <li><strong>Evaluation:</strong> what measurable result will demonstrate that the university project succeeded?</li>
+        <li><strong>Open-source license:</strong> which license should be selected?</li>
+        <li><strong>Hosted differentiation:</strong> if a paid hosted version exists later, what does it add beyond the open-source version?</li>
+      </ol>
+    </section>
+
+    <section id="handoff" class="card">
+      <h2>14. Collaboration and Fresh-Chat Handoff</h2>
+      <p>
+        The GitHub repository should be the durable source of truth for this project. The goal is to make it possible to continue development from a second account,
+        a fresh chat, or another development environment without depending on the original conversation history.
+      </p>
+
+      <h3>What a new collaborator or fresh chat should know immediately</h3>
+      <ul>
+        <li>The browser extension is the collection layer, not the entire product.</li>
+        <li>The core ambition is a long-term personalized competitive-programming coach.</li>
+        <li>The system should learn from actual submission history, including mistakes, not only accepted solutions.</li>
+        <li>The project should remain open source and runnable locally.</li>
+        <li>A hosted Railway deployment is a future option, not a current architectural requirement.</li>
+        <li>Do not silently convert unresolved ideas into fixed requirements.</li>
+        <li>Major product and architecture decisions should be recorded in the repository.</li>
+      </ul>
+
+      <h3>Immediate next work</h3>
+      <p>
+        Choose the first supported platform and the first measurable coaching outcome. Then perform a focused technical investigation of that platform's current submission-history and source-code access path before building a large multi-platform architecture.
+      </p>
+
+      <div class="callout good">
+        <span class="principle">Project principle:</span> collect only what the student authorizes, preserve useful evidence, and make every important coaching recommendation explainable in terms of that evidence.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Rookie Coach · Detailed project overview and repository handoff · Updated 2026-09-27</div>
+  </footer>
+</body>
+</html>
