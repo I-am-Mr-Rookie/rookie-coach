@@ -185,7 +185,7 @@ Status: WAITING
 Priority: P14
 Timebox: one run, <= 30 min
 Depends on: RC-013
-Activation: RC-013 review and relevant repairs are complete; one student explicitly permits a bounded import of their own history and can run the local check.
+Activation: RC-013 review and relevant repairs are complete; the owner explicitly permitted a bounded import of their own history. A partial local check was recorded on 2026-09-27; resume the remaining browser import acceptance checks from [the checkpoint](research/live-import-check.md).
 
 Goal: Verify the existing acquisition path on one consenting account and report actual source availability.
 

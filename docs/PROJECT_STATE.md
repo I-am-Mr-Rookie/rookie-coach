@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-020 — DONE
+Last run: RC-014 — PARTIAL_CHECKPOINT
 
 ## Milestone M0
 
@@ -33,15 +33,15 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 ## Known gaps and blockers
 
 - Codeforces documents own-account API source inclusion, but the authenticated response shape and actual source coverage remain untested. Do not claim live source collection works.
-- A real browser load and student import have not been checked; synthetic IndexedDB and fixture checks cover the report path, coaching states and local data controls. The pilot is not ready until RC-014, suitable real source coverage, browser controls and individual consent are checked.
+- RC-014 loaded the unpacked extension in the owner's local Chrome and checked one authorized official 10-record metadata page. The explicit file import, live report, repeated import, account isolation, and own-submission source access were not completed. See [the non-identifying checkpoint](research/live-import-check.md). Synthetic IndexedDB and fixture checks still cover the report path, coaching states and local data controls. The pilot is not ready until the live gate, suitable source coverage, browser controls and individual consent are checked.
 - The popup imports one selected JSON page, not live or full history. Exported JSON can include private source/history; deletion cannot remove original files or prior downloads. The recurring-edit rule remains a candidate, not a validated explanation. No synthetic integration repair was required in RC-013.
-- RC-014 awaits individual permission and a local live check; this did not block RC-020 preparation. Permanent license and later hosting choices are deferred.
+- RC-014 has the owner's permission and a partial local check; it awaits completion of the explicit file import and report comparison. Permanent license and later hosting choices are deferred.
 - Completed checkpoints are recorded in Git history and the run log.
 
 ## Next
 
-RC-014 remains WAITING for one student's explicit permission and local live check; the owner will do it later. RC-021 remains WAITING for RC-014, pilot readiness and actual permitted feedback. No further run is activated here.
+Resume RC-014's authorized local import from its [partial checkpoint](research/live-import-check.md); do not mistake the API page or synthetic build for an imported report. RC-021 remains WAITING for RC-014, pilot readiness and actual permitted feedback. No further run is activated here.
 
 ## Planned next milestone: local coaching pilot
 
-RC-013 is RESEARCH_COMPLETE; RC-015 through RC-020 are DONE. The [pilot guide](pilot-guide.md) prepares a local five-volunteer exercise, but the owner has not recruited or enrolled anyone. RC-014 is WAITING for an authorized live check and RC-021 is WAITING for real, permitted feedback. This independent project has no supplied university evaluation requirement.
+RC-013 is RESEARCH_COMPLETE; RC-015 through RC-020 are DONE. The [pilot guide](pilot-guide.md) prepares a local five-volunteer exercise, but the owner has not recruited or enrolled anyone. RC-014 has an authorized PARTIAL_CHECKPOINT and remains WAITING for its live import acceptance gate; RC-021 is WAITING for real, permitted feedback. This independent project has no supplied university evaluation requirement.

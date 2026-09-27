@@ -621,3 +621,34 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-020 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-014
+Status: PARTIAL_CHECKPOINT
+Objective: Authorized local live import and source-coverage check for the owner's account.
+Started UTC: approximately 2026-09-27T14:00Z (first tool step; exact clock was not captured until 14:04:56Z).
+
+Acceptance checks (written outside the repository before edits):
+1. Import one official `user.status` page with `from=1&count=10`; compare count and normalized aggregates with the local report.
+2. Reimport the same page without duplicate growth; verify separate-account isolation.
+3. Classify source only when observed through normal own-account access, and distinguish untested authenticated `includeSources`.
+
+Changed:
+- `docs/research/live-import-check.md` — non-identifying procedure, aggregate results, checklist and limits.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — honest partial checkpoint and next action.
+- No application code changed; no private response, handle, submission ID, source, credential or screenshot was added to the repository.
+
+Verified:
+- Cloned/fetched latest `main` at `33c44309b07b6ca438104d0cc7c0ce2885e5b087`; `git status --short` was clean before editing.
+- One official page in local Chrome returned `OK`. The private file outside the repository contained 10 records with 10 distinct IDs, 9 accepted and 1 wrong answer, 2 language labels, and no source-text fields.
+- `npm ci --ignore-scripts --no-audit --no-fund` — PASS.
+- `npm run build:extension` — PASS, including existing synthetic IndexedDB popup/report check.
+- Unpacked extension enabled in the owner's local Chrome — PASS, confirmed by the Chrome extensions page.
+- Explicit local-file import, report normalization, repeated import, live account isolation and normal-access source check — NOT RUN. Computer-use URL-safety verification stopped the browser action before import; this does not show a product defect.
+- Authenticated `includeSources` — NOT TESTED; no keys, cookies or secrets were used.
+
+Remaining / next:
+- Resume RC-014 in local Chrome using the saved private page, select it through the popup, compare report aggregates, reimport, and verify another account remains isolated. One page cannot establish full-history coverage. Leave unobserved source as `not-collected`.
+- RC-021 remains WAITING; pilot readiness is not established. No synthetic regression beyond the existing build check was needed because application code did not change.
+
+Commit:
+- This entry is committed with the RC-014 partial checkpoint; use the Git commit containing it as its hash.
