@@ -20,4 +20,4 @@ The collected history is intended to power a coaching system that can eventually
 
 The product is still in discovery. No final architecture, platform priority, storage model, or monetization model has been chosen yet.
 
-See [`docs/HANDOFF.md`](docs/HANDOFF.md) for the current project context and [`docs/OPEN_QUESTIONS.md`](docs/OPEN_QUESTIONS.md) for the next decisions to make.
+See the [detailed project overview](docs/project-overview.html) for the full concept, [`docs/HANDOFF.md`](docs/HANDOFF.md) for current project context, and [`docs/OPEN_QUESTIONS.md`](docs/OPEN_QUESTIONS.md) for the next decisions to make.
