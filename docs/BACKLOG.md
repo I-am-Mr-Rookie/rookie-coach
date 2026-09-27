@@ -281,7 +281,7 @@ Fallback / checkpoint: Reuse the current report layout. Split a genuine report d
 Out of scope: No hosted dashboard, conversational coach, new design system or public launch.
 
 ## RC-019 Pilot local data controls
-Status: READY
+Status: DONE
 Priority: P19
 Timebox: one run, <= 30 min
 Depends on: RC-018
@@ -301,7 +301,7 @@ Fallback / checkpoint: If missing export and deletion cannot both fit, create or
 Out of scope: No hosted privacy system, remote telemetry, cross-device sync or broad storage rewrite.
 
 ## RC-020 Five-volunteer pilot preparation
-Status: WAITING
+Status: READY
 Priority: P20
 Timebox: one run, <= 30 min
 Depends on: RC-019

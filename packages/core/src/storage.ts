@@ -3,6 +3,7 @@ import type { StudentAccount, Submission } from "./index.js";
 export interface EvidenceStore {
   upsert(record: Submission): Promise<void>;
   list(account: StudentAccount): Promise<Submission[]>;
+  delete(account: StudentAccount): Promise<number>;
 }
 
 function accountKey(account: StudentAccount): [string, string, string] {
@@ -36,6 +37,15 @@ export class MemoryEvidenceStore implements EvidenceStore {
     return [...this.records.values()]
       .filter((record) => record.platform === platform && record.namespace === namespace && record.handle === handle)
       .map((record) => structuredClone(record));
+  }
+
+  async delete(account: StudentAccount): Promise<number> {
+    const prefix = JSON.stringify(accountKey(account)).slice(0, -1) + ",";
+    let count = 0;
+    for (const key of this.records.keys()) {
+      if (key.startsWith(prefix)) { this.records.delete(key); count++; }
+    }
+    return count;
   }
 }
 
@@ -83,6 +93,28 @@ export class IndexedDbEvidenceStore implements EvidenceStore {
         let records: Submission[] = [];
         request.onsuccess = () => { records = request.result as Submission[]; };
         transaction.oncomplete = () => resolve(records);
+        transaction.onerror = () => reject(transaction.error);
+        transaction.onabort = () => reject(transaction.error);
+      });
+    } finally {
+      db.close();
+    }
+  }
+
+  async delete(account: StudentAccount): Promise<number> {
+    const key = accountKey(account);
+    const db = await this.open();
+    try {
+      return await new Promise<number>((resolve, reject) => {
+        const transaction = db.transaction("submissions", "readwrite");
+        const store = transaction.objectStore("submissions");
+        const request = store.index("account").getAllKeys(key);
+        let count = 0;
+        request.onsuccess = () => {
+          count = request.result.length;
+          for (const recordKey of request.result) store.delete(recordKey);
+        };
+        transaction.oncomplete = () => resolve(count);
         transaction.onerror = () => reject(transaction.error);
         transaction.onabort = () => reject(transaction.error);
       });

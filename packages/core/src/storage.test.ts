@@ -47,3 +47,18 @@ test("IndexedDB persists account-isolated upserts across store instances", async
   expect(await reopened.list(second)).toEqual([submission(second)]);
   expect(await reopened.list(third)).toEqual([]);
 });
+
+test("deleting one account persists across reopened stores without touching other accounts", async () => {
+  for (const store of [new MemoryEvidenceStore(), new IndexedDbEvidenceStore(fakeIndexedDB)]) {
+    await store.upsert(submission(account, "private source"));
+    await store.upsert(submission(second));
+    await store.upsert(submission(third));
+    expect(await store.delete(account)).toBe(1);
+    expect(await store.delete(account)).toBe(0);
+    const reopened = store instanceof MemoryEvidenceStore ? store : new IndexedDbEvidenceStore(fakeIndexedDB);
+    expect(await reopened.list(account)).toEqual([]);
+    expect(await reopened.list(second)).toEqual([submission(second)]);
+    expect(await reopened.list(third)).toEqual([submission(third)]);
+    await expect(store.delete({ ...account, handle: " " })).rejects.toThrow("Invalid evidence account");
+  }
+});

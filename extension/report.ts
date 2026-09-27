@@ -3,6 +3,10 @@ import { IndexedDbEvidenceStore, summarizeEvidence, diagnoseRecurringBoundaryEdi
 const status = document.querySelector<HTMLElement>("#status")!;
 const report = document.querySelector<HTMLElement>("#report")!;
 
+window.addEventListener("storage", (event) => {
+  if (event.key === "codeforcesHandle") location.reload();
+});
+
 function list(selector: string, lines: string[]): void {
   const element = document.querySelector<HTMLUListElement>(selector)!;
   const items = (lines.length ? lines : ["None in the imported records."]).map((line) => {

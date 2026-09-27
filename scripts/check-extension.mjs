@@ -24,6 +24,13 @@ const status = { textContent: "" };
 const metadata = { files: [] };
 const sources = { files: [] };
 const button = { disabled: false };
+const controls = {};
+const exportButton = { disabled: false, addEventListener: (_event, listener) => { controls.export = listener; } };
+const deleteButton = { disabled: false, addEventListener: (_event, listener) => { controls.delete = listener; } };
+let exportedBlob;
+let clickedDownload = false;
+let confirmed = false;
+let confirmationText = "";
 let submit;
 runInNewContext(readFileSync(new URL(script[1], root), "utf8"), {
   document: { querySelector: (selector) => ({
@@ -32,11 +39,17 @@ runInNewContext(readFileSync(new URL(script[1], root), "utf8"), {
     "#metadata": metadata,
     "#sources": sources,
     "#status": status,
-  })[selector] },
+    "#export": exportButton,
+    "#delete": deleteButton,
+  })[selector], createElement: () => ({ click() { clickedDownload = true; }, remove() {} }) },
+  URL: { createObjectURL(blob) { exportedBlob = blob; return "blob:local"; }, revokeObjectURL() {} },
+  Blob,
+  confirm: (message) => { confirmationText = message; return confirmed; },
   indexedDB,
   localStorage: {
     getItem: (key) => saved.get(key) ?? null,
     setItem: (key, value) => saved.set(key, value),
+    removeItem: (key) => saved.delete(key),
   },
 });
 assert.equal(input.value, "ExistingHandle");
@@ -74,8 +87,11 @@ async function render(handle) {
   const nodes = Object.fromEntries(["#status", "#report", "#overview", "#repeats", "#verdicts", "#languages", "#coverage", "#difficulties", "#tags", "#coaching-status", "#support", "#action", "#source", "#source-details"]
     .map((selector) => [selector, { textContent: "", hidden: true, children: [], replaceChildren(...children) { this.children = children; },
       set innerHTML(_) { throw new Error("Report must not parse imported text as HTML"); } }]));
+  nodes.reloadCount = 0;
   runInNewContext(readFileSync(new URL(reportScript[1], root), "utf8"), {
     document: { querySelector: (selector) => nodes[selector], createElement: () => ({ textContent: "", set innerHTML(_) { throw new Error("Imported HTML executed"); } }) },
+    window: { addEventListener: (_type, listener) => { nodes.onStorage = listener; } },
+    location: { reload: () => { nodes.reloadCount++; } },
     indexedDB,
     localStorage: { getItem: (key) => key === "codeforcesHandle" ? handle : null },
   });
@@ -143,6 +159,41 @@ const empty = await render("empty_demo");
 assert.equal(empty["#report"].hidden, false);
 assert.match(empty["#coaching-status"].textContent, /insufficient evidence.*no submissions/i);
 assert.equal(empty["#action"].hidden, true);
+input.value = "fixture_learner";
+await controls.export();
+assert.equal(clickedDownload, true);
+assert.equal(exportedBlob.type, "application/json");
+const exported = JSON.parse(await exportedBlob.text());
+assert.equal(exported.schemaVersion, 1);
+assert.equal(exported.account.handle, "fixture_learner");
+assert.deepEqual(exported.submissions.map((record) => record.submissionId).sort(), ["900000001", "900000002"]);
+assert.equal(exported.submissions.find((record) => record.submissionId === "900000002")?.source, "int main() { return 0; }\n");
+assert.equal("credentials" in exported, false);
+assert.equal("authentication" in exported, false);
+await controls.delete();
+assert.match(confirmationText, /fixture_learner.*permanent/i);
+assert.match((await render("fixture_learner"))["#overview"].textContent, /2 observed attempts/);
+confirmed = true;
+await controls.delete();
+assert.match(status.textContent, /Deleted 2.*fixture_learner/i);
+assert.equal(saved.has("codeforcesHandle"), false);
+assert.equal(input.value, "");
+nodes.onStorage({ key: "codeforcesHandle", oldValue: "fixture_learner", newValue: null });
+assert.equal(nodes.reloadCount, 1, "open report must refresh when the saved account is disconnected");
+const reopenedDb = await new Promise((resolve, reject) => {
+  const request = indexedDB.open("rookie-coach-evidence", 1);
+  request.onsuccess = () => resolve(request.result);
+  request.onerror = () => reject(request.error);
+});
+const remaining = await new Promise((resolve, reject) => {
+  const request = reopenedDb.transaction("submissions").objectStore("submissions").getAll();
+  request.onsuccess = () => resolve(request.result);
+  request.onerror = () => reject(request.error);
+});
+reopenedDb.close();
+assert.equal(remaining.some((record) => record.handle === "fixture_learner"), false);
+assert.equal(remaining.filter((record) => record.handle === "finding_demo").length, 4);
+assert.equal((await render("fixture_learner"))["#overview"].textContent, "0 observed attempts; 0 accepted; 0 without source text. 0 distinct problems in the imported records.");
 console.log("MV3 popup import and local report with synthetic IndexedDB evidence: PASS");
 console.log("Finding demo:", finding["#coaching-status"].textContent, finding["#support"].children.map((item) => item.textContent).join(" | "), finding["#action"].textContent);
 console.log("Abstention demo:", nodes["#coaching-status"].textContent, "No pattern:", noPattern["#coaching-status"].textContent, "Empty:", empty["#coaching-status"].textContent);
