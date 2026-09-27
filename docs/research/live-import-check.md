@@ -1,10 +1,12 @@
 # RC-014 local live-import check
 
-Date: 2026-09-27 UTC. Result: **PARTIAL_CHECKPOINT**; the live import acceptance gate did not pass.
+Date: 2026-09-27 UTC. Result: **DONE for RC-014's bounded check**; this is not pilot readiness or source-collection validation.
 
 ## Non-identifying procedure
 
 With the account owner's permission, opened one official `user.status` page in local Chrome with `from=1&count=10` and saved its JSON outside the repository. Compared aggregate fields from the saved page locally. Built the existing unpacked extension and confirmed it was enabled in the same local Chrome profile. After browser control stopped, the owner performed the explicit file import and saved an account-scoped export outside the repository. Compared that export with the API page locally. No JSON, source, identifiers, or screenshots are in this repository.
+
+The owner later provided a report screenshot in the private conversation. Its aggregate counts matched the export. The owner reported that their own submitted source is normally viewable on Codeforces and explicitly waived live account-isolation testing for this single-account check. Neither source-page access nor a repeat-import sequence was independently observed.
 
 ## Aggregate results
 
@@ -20,12 +22,13 @@ With the account owner's permission, opened one official `user.status` page in l
 | --- | --- |
 | One bounded official page, stored only locally | **PASS** |
 | Unpacked extension built and enabled in local Chrome | **PASS** |
-| Explicit file import matches page count, IDs, verdicts and languages | **PASS** — private export matched independently; report UI is a separate unchecked gate |
+| Explicit file import matches page count, IDs, verdicts and languages | **PASS** — private export matched independently |
 | Repeated import does not duplicate records | **OWNER-REPORTED PASS** — final export has 10; repeat sequence not independently observed |
-| Account isolation in the live browser store | **NOT RUN — acceptance not met** |
-| Source availability through normal access to own submissions | **NOT RUN — retain not-collected** |
+| Local report displays imported aggregates | **PASS** — owner-provided screenshot shows 10 attempts, 9 accepted, 1 wrong answer and 10 without imported source |
+| Account isolation in the live browser store | **NOT RUN — owner waived for this single-account RC-014 check; not a live isolation claim** |
+| Source availability through normal access to own submissions | **OWNER-REPORTED VIEWABLE** — no source was imported; all 10 local statuses remain `not-collected` |
 | Authenticated `includeSources` response shape | **NOT TESTED** |
 
 ## Limitations and next action
 
-One page is a truncated sample, not complete history or a stable snapshot; its aggregate verdicts cannot establish a coaching diagnosis. The report UI, live account isolation and source access remain unverified. No bare-handle validation, reimport or deletion of the URL-keyed account is required. In the owner's local Chrome, open the existing account's report and compare only aggregate counts with the export; if a second local account already exists, check that it remains isolated without importing anyone else's history. Inspect source only via normal access to the owner's own submissions, reporting aggregate available/unavailable counts only when observed. Otherwise retain `not-collected`. Authenticated `includeSources` remains untested. Do not start RC-021 or claim pilot readiness from this checkpoint.
+One page is a truncated sample, not complete history or a stable snapshot; its aggregate verdicts cannot establish a coaching diagnosis. The screenshot confirms report display, not source capture or a full browser-control walkthrough. No bare-handle validation, reimport or deletion of the URL-keyed account is required. The owner's ability to view their own source on Codeforces does not change the local `not-collected` statuses. Live account isolation was waived for RC-014 and remains untested; authenticated `includeSources` also remains untested, with no credentials requested. The source-dependent coaching rule still lacks live source evidence. RC-021 and a real pilot require separate readiness and individual feedback permission.

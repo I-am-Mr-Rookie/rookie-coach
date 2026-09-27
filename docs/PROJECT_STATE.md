@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-014 — PARTIAL_CHECKPOINT
+Last run: RC-014 — DONE
 
 ## Milestone M0
 
@@ -33,15 +33,15 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 ## Known gaps and blockers
 
 - Codeforces documents own-account API source inclusion, but the authenticated response shape and actual source coverage remain untested. Do not claim live source collection works.
-- RC-014 loaded the unpacked extension in the owner's local Chrome and checked one authorized official 10-record metadata page. The owner then imported and exported 10 records; IDs, verdicts and languages matched the page in an independent local recheck. The intentionally entered full Codeforces profile URL was accepted as the local account key; its final handle segment matched the page's sole author. The owner reports the repeat import worked, but its sequence was not independently observed. Report UI, live account isolation and own-submission source access remain unverified. See [the non-identifying checkpoint](research/live-import-check.md). Synthetic IndexedDB and fixture checks still cover the report path, coaching states and local data controls. The pilot is not ready until the live gate, suitable source coverage, browser controls and individual consent are checked.
+- RC-014 checked one authorized official 10-record metadata page in local Chrome. An independent local recheck matched the owner's export by ID, verdict and language; the intentionally entered profile URL's final handle segment matched the page's sole author. An owner-provided report screenshot showed the expected aggregate counts. The owner reports the repeat import worked and that their own submitted source is viewable normally on Codeforces; neither action was independently observed. No source was imported, so all 10 local records correctly remain `not-collected`. Live account-isolation testing was explicitly waived for this single-account RC-014 check, not verified. See [the non-identifying result](research/live-import-check.md). This completes RC-014's bounded check, not the real-student coaching or pilot readiness gates.
 - The popup imports one selected JSON page, not live or full history. Exported JSON can include private source/history; deletion cannot remove original files or prior downloads. The recurring-edit rule remains a candidate, not a validated explanation. No synthetic integration repair was required in RC-013.
-- RC-014 has the owner's permission and a partial local check; no bare-handle repair or reimport is required for the accepted URL-shaped account key. It still awaits owner-operated report and, where possible, live isolation and normal-access source checks. Exact-text account keys can create separate local buckets if a different string is entered later. Permanent license and later hosting choices are deferred.
+- No bare-handle repair or reimport is required for the accepted URL-shaped account key. Exact-text account keys can create separate local buckets if a different string is entered later. Permanent license and later hosting choices are deferred.
 - Completed checkpoints are recorded in Git history and the run log.
 
 ## Next
 
-Resume RC-014's remaining browser checks from its [partial checkpoint](research/live-import-check.md); the matching export verifies normalization, not the report UI or source availability. RC-021 remains WAITING for RC-014, pilot readiness and actual permitted feedback. No further run is activated here.
+RC-014 is complete for its bounded metadata import and source-availability check. The live sample contains no imported source, so the source-dependent coaching rule cannot be validated from it. Pilot readiness still requires suitable source coverage, real-browser data-control checks and individual consent. RC-021 remains WAITING for actual permitted feedback; no further run is activated here.
 
 ## Planned next milestone: local coaching pilot
 
-RC-013 is RESEARCH_COMPLETE; RC-015 through RC-020 are DONE. The [pilot guide](pilot-guide.md) prepares a local five-volunteer exercise, but the owner has not recruited or enrolled anyone. RC-014 has an authorized PARTIAL_CHECKPOINT and remains WAITING for its live import acceptance gate; RC-021 is WAITING for real, permitted feedback. This independent project has no supplied university evaluation requirement.
+RC-013 is RESEARCH_COMPLETE; RC-014 through RC-020 are DONE. The [pilot guide](pilot-guide.md) prepares a local five-volunteer exercise, but the owner has not recruited or enrolled anyone. RC-014's one-page metadata check is complete; source-dependent live coaching and pilot controls remain unverified. RC-021 is WAITING for real, permitted feedback. This independent project has no supplied university evaluation requirement.

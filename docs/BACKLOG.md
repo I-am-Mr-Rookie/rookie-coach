@@ -181,17 +181,17 @@ Fallback / checkpoint: If the demo cannot run, preserve the reproducer and creat
 Out of scope: No new feature, broad refactor, live collection, diagnosis claim or university study.
 
 ## RC-014 Authorized live import and source coverage check
-Status: WAITING
+Status: DONE
 Priority: P14
 Timebox: one run, <= 30 min
 Depends on: RC-013
-Activation: RC-013 review is complete and the owner explicitly permitted a bounded import of their own history. The 2026-09-27 partial local check verified the exported metadata against one official page. The intentionally entered profile URL is an acceptable local account key and its final segment matched the page's sole author; no input-validation repair or reimport is required. Resume only the remaining browser checks from [the checkpoint](research/live-import-check.md).
+Activation: RC-013 review is complete and the owner explicitly permitted a bounded import of their own history. The 2026-09-27 local check verified the exported metadata against one official page and the owner-provided report screenshot showed matching aggregates. The intentionally entered profile URL is an acceptable local account key; no input-validation repair or reimport is required. The owner waived live account-isolation testing for this single-account check and reported that their own submitted source is viewable normally on Codeforces. See [the result](research/live-import-check.md).
 
 Goal: Verify the existing acquisition path on one consenting account and report actual source availability.
 
 Acceptance:
 1. Use the existing user-controlled local import or legitimate user-export path. Bound the sample, API requests and time; retain account details and records locally. Do not request passwords, cookies or API secrets in chat or GitHub.
-2. Check imported account isolation, field normalization, duplicates, coverage/truncation and available/unavailable/not-collected source status against what the student can normally access.
+2. Check field normalization, duplicates and coverage/truncation; distinguish normally viewable own-submission source from source actually imported into the local evidence. The owner explicitly removed live account-isolation testing from RC-014; this does not establish live isolation for a later multi-account use case.
 3. Add docs/research/live-import-check.md with a non-identifying method, date, result and limitations. Clearly distinguish working live metadata, source evidence and any untested authenticated response. Add a narrow repair prerequisite if needed.
 
 Verification: Record the local procedure and a pass/fail checklist without account identifiers, source or private screenshots. Re-run a targeted synthetic regression check only if code changes.

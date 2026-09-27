@@ -683,3 +683,34 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-014 corrected partial checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-014 closeout
+Status: DONE
+Objective: Close the bounded owner-authorized metadata import and source-availability check using the owner-provided report evidence and clarified scope.
+Started UTC: 2026-09-27T14:44:34Z.
+
+Acceptance checks (before edits):
+1. Compare the screenshot's non-identifying report aggregates with the previously verified local export.
+2. Distinguish owner-reported normal source visibility from source actually imported; record the owner's decision that live account isolation is unnecessary for this single-account RC-014 check.
+3. Preserve the pilot's separate source-coverage and browser-control gates, review the public diff for private details, and pass `git diff --check`.
+
+Changed:
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/research/live-import-check.md` — mark RC-014 DONE within its bounded scope and record the remaining limitations.
+- `docs/pilot-guide.md` — update the metadata-import gate without claiming pilot readiness or live source coverage.
+- No application code or private screenshot was added.
+
+Verified:
+- Owner-provided report screenshot in the private conversation shows 10 observed attempts, 9 accepted, 1 wrong answer, and 10 without imported source, matching the independently checked export. The screenshot was not committed.
+- The owner reports that their own submitted code is normally viewable on Codeforces. This was not independently observed and does not change the 10 stored `not-collected` source statuses.
+- The owner removed live account-isolation testing from RC-014's acceptance for this single-account check; live isolation remains untested rather than passed.
+- `git diff --check` — PASS; private-identifier scan of the public diff found no match. Untracked files appeared under repository `tmp/` during review; they were left untouched and excluded from the commit.
+
+Assumptions / decisions:
+- The final export contains 10 records after the owner-reported repeat, but the repeat sequence was not independently observed. One page is truncated evidence, not full history.
+- Authenticated `includeSources` and real-student source capture remain untested. RC-014 completion does not establish readiness for a source-dependent coaching pilot.
+
+Remaining / next:
+- RC-021 remains WAITING for real, individually permitted feedback. Before any real source-dependent coaching session, establish legitimate local source coverage and the intended browser data controls; do not interpret this metadata-only check as a working live diagnosis.
+
+Commit:
+- This entry is committed with the RC-014 closeout; use the Git commit containing it as its hash.
