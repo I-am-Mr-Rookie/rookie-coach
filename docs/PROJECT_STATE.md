@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-013 — RESEARCH_COMPLETE
+Last run: RC-015 — DONE
 
 ## Milestone M0
 
@@ -23,6 +23,7 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 - RC-011 summarizes one account's stored evidence deterministically: attempt/acceptance counts, verdict, language and source coverage, ordered problem attempts, observed attempts before first acceptance, and difficulty/tag frequencies. These are observations over imported records, not weakness diagnoses; partial imports can omit earlier attempts.
 - RC-012 adds a local extension report for the configured handle with observed repeated attempts, verdict and language counts, source coverage, and available difficulty/tag metadata. The synthetic popup-to-report check passes; the README documents a manual browser demo.
 - RC-013 [reviewed M0 integration and coaching readiness](research/m0-readiness.md) at merged commit `1d660ed`: the synthetic import-to-report path, 13 tests, typechecks and evidence fixture pass. It records a narrowly testable boundary-comparator revision hypothesis for later comparison work; no diagnosis has been validated.
+- RC-015 compares immediately adjacent observed failed and accepted attempts for one account and problem, ordered by time and submission ID. It exposes a contiguous changed-line block and both capture origins when both source texts exist, or an explicit unavailable comparison with the original source statuses. Synthetic tests pass; no diagnosis is emitted.
 
 ## Known gaps and blockers
 
@@ -34,8 +35,8 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 
 ## Next
 
-RC-015: compare synthetic failed and accepted attempts with explicit missing-source outcomes. RC-014 remains WAITING for one student's explicit permission and local live check; it is independent of RC-015. Stop after this bounded run.
+RC-016: test one conservative recurring-mistake rule against synthetic counterexamples. RC-014 remains WAITING for one student's explicit permission and local live check; it is independent of fixture-based work. Stop after this bounded run.
 
 ## Planned next milestone: local coaching pilot
 
-Follow [RC-013 through RC-020](BACKLOG.md#post-m0-pilot) to prepare one conservative recurring-mistake diagnosis and one practice action. RC-021 reviews real feedback when available. The owner can recruit five volunteers; individual consent and live validation are still required. This independent project has no supplied university evaluation requirement. RC-013 is RESEARCH_COMPLETE, RC-015 is READY, and RC-014 remains WAITING for authorization.
+Follow [RC-013 through RC-020](BACKLOG.md#post-m0-pilot) to prepare one conservative recurring-mistake diagnosis and one practice action. RC-021 reviews real feedback when available. The owner can recruit five volunteers; individual consent and live validation are still required. This independent project has no supplied university evaluation requirement. RC-013 is RESEARCH_COMPLETE, RC-015 is DONE, RC-016 is READY, and RC-014 remains WAITING for authorization.

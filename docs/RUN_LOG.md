@@ -410,3 +410,50 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-013 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-015
+Status: DONE
+Objective: Compare related observed failed and accepted submissions using local normalized evidence.
+Started UTC: first recorded clock reading 2026-09-27T07:13:18Z (the initial repository checks preceded this reading).
+
+Acceptance checks:
+- Pair by the same account and problem in deterministic submitted-time/submission-ID order, retaining both IDs.
+- Show changed source lines when both texts exist; otherwise explain missing comparison and retain each source status and capture origin.
+- Cover a positive pair, missing source, no later acceptance, and cross-account/problem cases with synthetic tests.
+
+Changed:
+- `packages/core/src/comparison.ts`, `packages/core/src/index.ts` — compare an immediately preceding non-null, non-OK verdict with an OK verdict on the same problem. Use the existing summary's account validation and order; expose the smallest contiguous changed-line block, or an unavailable result.
+- `packages/core/src/comparison.test.ts` — invented sources, shuffled input, source statuses/origins, and non-pairing/isolation cases.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — complete RC-015 and activate RC-016; RC-014 remains consent-gated.
+
+Verified:
+- `timeout 120s npx vitest run packages/core/src/comparison.test.ts` — PASS, three tests (after a RED run with missing export).
+- `timeout 120s npm test` — PASS, 16 tests across five files.
+- `timeout 120s npm run typecheck` — PASS, core and Codeforces packages.
+- `git diff --check` — PASS.
+
+Assumptions / decisions:
+- Only immediately adjacent observed failed/accepted records pair. Null verdicts do not count as failures; a partial import can omit intervening attempts.
+- A changed block is an edit observation, not a cause or diagnosis. It strips shared leading/trailing lines and preserves the original line contents. No student code was executed or real data collected.
+- An unavailable comparison retains separate `not-collected` versus observed `unavailable` source statuses and both metadata/source origins.
+
+Remaining / next:
+- RC-016 — conservative recurring-mistake rule and counterexamples on synthetic data. RC-014 remains WAITING for explicit student permission and local live validation.
+
+Commit:
+- This entry is committed with the RC-015 checkpoint; use the Git commit containing it as its hash.
+
+## PR #7 review checkpoint 2026-09-27
+Status: DONE
+Objective: Review RC-015 before the owner-authorized merge.
+
+Review found that a non-null Codeforces `TESTING` or `SUBMITTED` verdict was misclassified as a failed attempt. The comparison now pairs only clear unsuccessful judged verdicts with a later adjacent `OK`; pending, skipped, ambiguous and unknown verdicts do not produce evidence pairs. No RC-014 work was performed.
+
+Verified:
+- `timeout 120s npx vitest run packages/core/src/comparison.test.ts` — PASS, four tests; the new pending-verdict test failed before the fix.
+- `timeout 120s npm test` — PASS, 17 tests across five files.
+- `timeout 120s npm run typecheck` — PASS.
+- `timeout 120s npm run build:extension` — PASS, including synthetic import and report.
+- `git diff --check` — PASS.
+
+Next: Merge PR #7 after rechecking its head and base. RC-016 remains the next implementation run; RC-014 remains WAITING for consent.
