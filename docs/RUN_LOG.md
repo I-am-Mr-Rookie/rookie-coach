@@ -556,3 +556,38 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-018 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-019
+Status: DONE
+Objective: Give the selected local account export and confirmed deletion controls before a pilot.
+Started UTC: first recorded shell clock 2026-09-27T08:17:27Z (skill and GitHub checks preceded this reading).
+
+Acceptance checks:
+- An explicit file import remains the only collection action; the popup explains the local boundary, stopping, and private export handling.
+- A confirmed delete removes only the selected account's submissions, disconnects its saved handle, and a reopened store/report cannot restore them; other accounts remain.
+- A user-triggered export contains only that account's version 1 normalized evidence envelope, including available source, without browser authentication state.
+
+Changed:
+- `packages/core/src/storage.ts`, `packages/core/src/storage.test.ts` — atomic IndexedDB account-index deletion and matching in-memory behavior, with two-account persistence checks.
+- `extension/popup.ts`, `extension/popup.html`, `extension/report.ts` — local JSON download, confirmation and deletion, saved-handle disconnect and open-report refresh, plus plain-language controls.
+- `scripts/check-extension.mjs` — synthetic account-scoped export, canceled/confirmed deletion, reopened persistence, and report invalidation.
+- `README.md`, `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — usage and checkpoint.
+
+Verified:
+- `timeout 120s npx vitest run packages/core/src/storage.test.ts` — PASS, three tests after RED for missing delete method.
+- `timeout 120s npm run build:extension` — PASS, TypeScript, bundle and synthetic popup/report flow after RED for missing export controls and report refresh.
+- `timeout 120s npm test` — PASS, 26 tests across seven files.
+- `timeout 120s npm run typecheck` — PASS, core and Codeforces packages.
+- `git diff --check` — PASS.
+- Manual Chrome/Chromium load — NOT RUN: no browser executable found here. Inspected popup HTML controls and script wiring; synthetic browser APIs exercised the flow.
+
+Assumptions / decisions:
+- Export uses the existing version 1 fixture envelope and the current `local-student` account, with a generic filename. It includes source/history if present and never reads the popup's localStorage or credentials.
+- Deletion leaves original input files and prior downloads untouched; importing again is an explicit new action. Report data is computed from IndexedDB and an open report reloads when the saved handle is removed.
+- RC-014 remains WAITING for one student's explicit permission and local live validation; no real student data was used.
+
+Remaining / next:
+- RC-020 — synthetic pilot guide and readiness gates. Do not start it in this run.
+
+Commit:
+- This entry is committed with the RC-019 checkpoint; use the Git commit containing it as its hash.
