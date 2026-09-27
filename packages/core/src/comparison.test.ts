@@ -67,3 +67,12 @@ test("never crosses accounts or problems, and does not invent a later acceptance
   expect(() => compareAttempts(account, [attempt("1", "A", "WRONG_ANSWER", 10), attempt("2", "A", "OK", 20, { handle: "another" })]))
     .toThrow("different account");
 });
+
+test("pending or ambiguous Codeforces verdicts cannot become failed attempts", () => {
+  for (const verdict of ["TESTING", "SUBMITTED", "SKIPPED", "FAILED", "UNKNOWN"]) {
+    expect(compareAttempts(account, [attempt("1", "A", verdict, 10), attempt("2", "A", "OK", 20)]))
+      .toEqual([]);
+  }
+  expect(compareAttempts(account, [attempt("1", "A", "WRONG_ANSWER", 10), attempt("2", "A", "OK", 20)]))
+    .toHaveLength(1);
+});

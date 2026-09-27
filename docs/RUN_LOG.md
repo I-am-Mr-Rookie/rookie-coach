@@ -442,3 +442,18 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-015 checkpoint; use the Git commit containing it as its hash.
+
+## PR #7 review checkpoint 2026-09-27
+Status: DONE
+Objective: Review RC-015 before the owner-authorized merge.
+
+Review found that a non-null Codeforces `TESTING` or `SUBMITTED` verdict was misclassified as a failed attempt. The comparison now pairs only clear unsuccessful judged verdicts with a later adjacent `OK`; pending, skipped, ambiguous and unknown verdicts do not produce evidence pairs. No RC-014 work was performed.
+
+Verified:
+- `timeout 120s npx vitest run packages/core/src/comparison.test.ts` — PASS, four tests; the new pending-verdict test failed before the fix.
+- `timeout 120s npm test` — PASS, 17 tests across five files.
+- `timeout 120s npm run typecheck` — PASS.
+- `timeout 120s npm run build:extension` — PASS, including synthetic import and report.
+- `git diff --check` — PASS.
+
+Next: Merge PR #7 after rechecking its head and base. RC-016 remains the next implementation run; RC-014 remains WAITING for consent.

@@ -4,6 +4,12 @@ import { summarizeEvidence } from "./summary.js";
 type EvidenceRef = Pick<Submission, "submissionId" | "sourceStatus" | "captureMethod" | "provenance" |
   "capturedAt" | "sourceCaptureMethod" | "sourceProvenance" | "sourceCapturedAt">;
 
+// Only clear unsuccessful judged outcomes; pending, skipped and unknown verdicts are not failures.
+const failedVerdicts = new Set([
+  "COMPILATION_ERROR", "RUNTIME_ERROR", "WRONG_ANSWER", "TIME_LIMIT_EXCEEDED",
+  "MEMORY_LIMIT_EXCEEDED", "IDLENESS_LIMIT_EXCEEDED",
+]);
+
 export interface AttemptComparison {
   problemId: string;
   failed: EvidenceRef;
@@ -52,7 +58,7 @@ export function compareAttempts(account: StudentAccount, records: Submission[]):
     for (let i = 1; i < ordered.length; i++) {
       const failed = ordered[i - 1]!;
       const accepted = ordered[i]!;
-      if (failed.verdict === null || failed.verdict === "OK" || accepted.verdict !== "OK") continue;
+      if (!failedVerdicts.has(failed.verdict ?? "") || accepted.verdict !== "OK") continue;
       comparisons.push({ problemId: problem.problemId, failed: reference(failed),
         accepted: reference(accepted), sourceComparison: sourceComparison(failed, accepted) });
     }
