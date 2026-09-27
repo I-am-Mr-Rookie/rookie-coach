@@ -123,7 +123,7 @@ Acceptance: From one configured handle, a user-triggered import can process fixt
 Out of scope: No scheduler, no continuous background scraping, no other platforms.
 
 ## RC-011 Deterministic evidence summary
-Status: READY
+Status: DONE
 Priority: P11
 Timebox: one run, <= 30 min
 Depends on: RC-010
@@ -135,7 +135,7 @@ Acceptance: Compute and test at least: total attempts, accepted count, verdict d
 Out of scope: No personalized curriculum generator, no embeddings, no LLM calls.
 
 ## RC-012 Local first report
-Status: WAITING
+Status: READY
 Priority: P12
 Timebox: one run, <= 30 min
 Depends on: RC-011
