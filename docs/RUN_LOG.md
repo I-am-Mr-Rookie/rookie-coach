@@ -523,3 +523,36 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-017 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-018
+Status: DONE
+Objective: Show the candidate recurring source-edit finding and its one practice action in the existing local report.
+Started UTC: first recorded clock reading 2026-09-27T08:04:13Z (initial tool steps preceded this reading).
+
+Acceptance checks:
+- A synthetic two-problem finding displays its possible wording, supporting attempt IDs/origins, inert source text and one checkable exercise without a causal claim.
+- Missing evidence, no supported pattern and empty accounts show distinct honest states while retaining account isolation and evidence counts; imported HTML-looking text remains inert.
+- The build's synthetic finding/abstention demonstration, complete tests and typechecks pass; document the reproducible demo.
+
+Changed:
+- `extension/report.ts`, `extension/report.html` — reuse core diagnosis/action functions, present source and references with text nodes, and distinguish abstentions in the local report.
+- `scripts/check-extension.mjs` — exercise synthetic finding, missing source, no supported pattern, empty account and untrusted text through bundled report and IndexedDB.
+- `README.md` — explain the fixture-backed coaching demo and its limits.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — close RC-018 and activate RC-019.
+
+Verified:
+- `timeout 120s npm run build:extension` — PASS after expected RED on missing coaching and source fields; TypeScript, both bundles, and synthetic import/report finding and abstention states.
+- `timeout 120s npm test` — PASS, 25 tests across seven files.
+- `timeout 120s npm run typecheck` — PASS, core and Codeforces packages.
+- `git diff --check` — PASS.
+- Manually inspected the synthetic finding and abstention strings printed by the build runner. A real Chrome/Chromium extension load — NOT RUN; no browser executable verified in this environment.
+
+Assumptions / decisions:
+- Source is shown only in an explicitly opened native `details` panel, assigned via `textContent`. This stays local to the selected account. Imported origins and problem names are also rendered via text nodes.
+- The rule's finding is a possible edit pattern; a partial one-page import and synthetic fixtures cannot validate a causal diagnosis or live student coverage. RC-014 still needs individual consent.
+
+Remaining / next:
+- RC-019 — local account-scoped deletion/export controls. RC-014 remains WAITING for an authorized local live check.
+
+Commit:
+- This entry is committed with the RC-018 checkpoint; use the Git commit containing it as its hash.

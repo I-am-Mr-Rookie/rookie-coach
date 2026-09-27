@@ -261,7 +261,7 @@ Fallback / checkpoint: Keep the action self-contained if a suitable external pro
 Out of scope: No study schedule, problem recommender engine, mastery prediction or promised improvement.
 
 ## RC-018 Coaching report integration
-Status: READY
+Status: DONE
 Priority: P18
 Timebox: one run, <= 30 min
 Depends on: RC-017
@@ -281,7 +281,7 @@ Fallback / checkpoint: Reuse the current report layout. Split a genuine report d
 Out of scope: No hosted dashboard, conversational coach, new design system or public launch.
 
 ## RC-019 Pilot local data controls
-Status: WAITING
+Status: READY
 Priority: P19
 Timebox: one run, <= 30 min
 Depends on: RC-018
