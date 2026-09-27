@@ -16,6 +16,9 @@ function recordKey(record: Submission): [string, string, string, string] {
   const key = accountKey(record);
   if (!record.submissionId.trim() || record.problem.platform !== record.platform ||
       (record.sourceStatus === "available" ? !record.source?.trim() : record.source !== null) ||
+      (record.sourceStatus === "not-collected" && record.sourceCaptureMethod !== undefined) ||
+      ([record.sourceCaptureMethod, record.sourceProvenance, record.sourceCapturedAt].some((field) => field !== undefined) &&
+        (!record.sourceCaptureMethod || !record.sourceProvenance?.trim() || !record.sourceCapturedAt)) ||
       !record.provenance.trim()) throw new Error("Invalid evidence submission");
   return [...key, record.submissionId];
 }

@@ -278,3 +278,37 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-009 checkpoint; use the Git commit containing this entry as its hash.
+
+## Run 2026-09-27 / RC-010
+Status: DONE
+Objective: Connect explicit popup import of user-supplied Codeforces metadata JSON and optional source export to local account-scoped storage.
+Started UTC: 2026-09-27T06:01:05Z
+
+Acceptance checks:
+- Configured handle and explicit action import a synthetic status page through the adapter into IndexedDB; progress and errors are visible.
+- Matching source evidence merges by account and submission ID, retaining metadata provenance and existing source on repeated metadata imports; mismatches fail safely.
+- Fixture tests, typechecks, and extension build pass without live network or extra browser permissions.
+
+Changed:
+- `extension/popup.ts`, `extension/import.ts`, `extension/popup.html` — explicit local file import, validation, progress/errors, and IndexedDB storage with source merge.
+- `packages/core/src/index.ts`, `packages/core/src/storage.ts`, `docs/evidence-contract-v1.md`, `scripts/check-evidence-fixture.py` — optional source origin fields alongside unchanged metadata provenance, with compatible storage validation.
+- `extension/import.test.ts`, `scripts/check-extension.mjs` — synthetic merge/isolation/reimport tests and bundled popup-to-IndexedDB check, including an error state.
+- `package.json`, `package-lock.json`, `extension/tsconfig.json` — bundle the popup with the already installed esbuild dependency; no browser permission added.
+- `README.md`, `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — document the local demo, complete RC-010, activate RC-011.
+
+Verified:
+- `npm test` — PASS, 11 tests in three files.
+- `npm run typecheck` — PASS, core and Codeforces packages.
+- `npm run build:extension` — PASS, typecheck, browser bundle, MV3 manifest, synthetic popup import to IndexedDB and error state.
+- `python3 scripts/check-evidence-fixture.py` — PASS, version 1 fixture.
+- `git diff --check` — PASS.
+
+Assumptions / decisions:
+- The user selects one own-account `user.status` JSON page; the popup makes no live request, requires no host permission, and cannot authenticate the file's claimed handle. A source export must match the configured local account and every source ID must exist in that page.
+- The local namespace is `local-student`; source stays on the device. Reimporting metadata retains previously merged source. Existing source records without separate origin fields remain accepted for compatibility.
+
+Remaining / next:
+- RC-011 — summarize stored evidence deterministically. Historical multi-page import and live source acquisition remain unverified/deferred beyond this fixture-backed slice.
+
+Commit:
+- This entry is committed with the RC-010 checkpoint; use the Git commit containing it as its hash.
