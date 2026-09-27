@@ -470,20 +470,20 @@ Acceptance checks:
 
 Changed:
 - `packages/core/src/diagnosis.ts`, `packages/core/src/index.ts` — deterministic two-problem rule using existing account-validated adjacent comparisons and a tightly scoped textual loop edit. No parser, source execution or added dependency.
-- `packages/core/src/diagnosis.test.ts` — synthetic positive case and abstentions; observed RED for missing implementation and again for block-comment/raw-string false positives before narrowing the rule.
+- `packages/core/src/diagnosis.test.ts` — synthetic positive case and abstentions; observed RED for missing implementation, block-comment/raw-string false positives, and review-found inactive-code/unsupported-platform false positives before narrowing the rule.
 - `docs/research/recurring-boundary-rule.md` — match contract, counterexamples, limitations and wording.
 - `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — close RC-016 and ready RC-017; RC-014 remains consent-gated.
 
 Verified:
-- `timeout 120s npx vitest run packages/core/src/diagnosis.test.ts` — PASS, five tests after the RED checks.
-- `timeout 120s npm test` — PASS, 22 tests across six files.
+- `timeout 120s npx vitest run packages/core/src/diagnosis.test.ts` — PASS, six tests after the RED checks.
+- `timeout 120s npm test` — PASS, 23 tests across six files.
 - `timeout 120s npm run typecheck` — PASS, core and Codeforces packages.
 - `timeout 120s npm run build:extension` — PASS, TypeScript, bundle, MV3 and synthetic popup-to-report flow.
 - `git diff --check` — PASS.
 - Live collection and real-browser manual load — not run; outside RC-016.
 
 Assumptions / decisions:
-- The supported form is intentionally narrower than arbitrary C++: simple single-line loop and identifier bound; sources with block-comment or raw-string markers abstain. The returned reason names one coverage obstacle, not exhaustive history.
+- The supported form is intentionally narrower than arbitrary C++: simple single-line loop and identifier bound; block comments, raw strings, preprocessor conditions/macros and continued lines abstain. Other platforms abstain. The returned reason names one coverage obstacle, not exhaustive history.
 - The finding is a possible repeated source edit, not proof of the original wrong-answer causes. At least two distinct problems are required; no real student data was used.
 
 Remaining / next:

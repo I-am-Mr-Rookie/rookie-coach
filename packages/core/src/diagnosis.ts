@@ -2,7 +2,7 @@ import type { StudentAccount, Submission } from "./index.js";
 import { compareAttempts, type AttemptComparison } from "./comparison.js";
 
 type Reason = "no-eligible-pairs" | "missing-source" | "missing-source-origin" |
-  "unsupported-language" | "no-matching-edit" | "only-one-problem";
+  "unsupported-platform" | "unsupported-language" | "no-matching-edit" | "only-one-problem";
 
 export type BoundaryDiagnosis =
   | { status: "finding"; finding: {
@@ -25,8 +25,10 @@ function isSingleLoopBoundEdit(comparison: AttemptComparison): boolean {
 
 /** Report a possible repeated source edit only when two distinct problems support it. */
 export function diagnoseRecurringBoundaryEdit(account: StudentAccount, records: Submission[]): BoundaryDiagnosis {
+  const comparisons = compareAttempts(account, records);
+  if (account.platform !== "codeforces") return { status: "insufficient-evidence", reason: "unsupported-platform" };
   const byId = new Map(records.map((record) => [record.submissionId, record]));
-  const pairs = compareAttempts(account, records).filter(({ failed }) =>
+  const pairs = comparisons.filter(({ failed }) =>
     byId.get(failed.submissionId)?.verdict === "WRONG_ANSWER");
   const support = new Map<string, Pick<AttemptComparison, "problemId" | "failed" | "accepted">>();
   let reason: Reason = pairs.length ? "no-matching-edit" : "no-eligible-pairs";
@@ -40,8 +42,9 @@ export function diagnoseRecurringBoundaryEdit(account: StudentAccount, records: 
       reason = "missing-source";
     } else if (![pair.failed, pair.accepted].every((ref) => ref.sourceCaptureMethod && ref.sourceProvenance && ref.sourceCapturedAt)) {
       reason = "missing-source-origin";
-    } else if (!/\/\*|\*\/|R"/.test(failed.source ?? "") &&
-               !/\/\*|\*\/|R"/.test(accepted.source ?? "") && isSingleLoopBoundEdit(pair)) {
+    } else if (![failed.source, accepted.source].some((source) =>
+      /\/\*|\*\/|R"|\\\r?\n|^\s*#\s*(?:if|ifdef|ifndef|elif|else|endif|define)\b/m.test(source ?? "")) &&
+      isSingleLoopBoundEdit(pair)) {
       support.set(pair.problemId, { problemId: pair.problemId, failed: pair.failed, accepted: pair.accepted });
     }
   }

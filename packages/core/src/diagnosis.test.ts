@@ -49,8 +49,13 @@ test("comment edits and another substantive edit cannot impersonate a loop-only 
   const blockAfter = `/*\n${after}\n*/`;
   const rawBefore = `auto example = R"(\n${before}\n)";`;
   const rawAfter = `auto example = R"(\n${after}\n)";`;
+  const inactiveBefore = `#if 0\n${before}\n#endif`;
+  const inactiveAfter = `#if 0\n${after}\n#endif`;
+  const continuedCommentBefore = `// explanation \\\n${before}`;
+  const continuedCommentAfter = `// explanation \\\n${after}`;
   for (const other of [pair("B", 3, commentBefore, commentAfter), pair("B", 3, before, changedBody),
-    pair("B", 3, blockBefore, blockAfter), pair("B", 3, rawBefore, rawAfter)]) {
+    pair("B", 3, blockBefore, blockAfter), pair("B", 3, rawBefore, rawAfter),
+    pair("B", 3, inactiveBefore, inactiveAfter), pair("B", 3, continuedCommentBefore, continuedCommentAfter)]) {
     expect(diagnoseRecurringBoundaryEdit(account, [...pair("A", 1), ...other])).toMatchObject({
       status: "insufficient-evidence", reason: "only-one-problem",
     });
@@ -72,4 +77,12 @@ test("unsupported language abstains and account validation remains intact", () =
   const otherAccount = pair("B", 3);
   otherAccount[0]!.handle = "elsewhere";
   expect(() => diagnoseRecurringBoundaryEdit(account, [...pair("A", 1), ...otherAccount])).toThrow("different account");
+});
+
+test("Codeforces rule cannot report a finding for another platform", () => {
+  const foreign = [...pair("A", 1), ...pair("B", 3)].map((record) => ({
+    ...record, platform: "atcoder", problem: { ...record.problem, platform: "atcoder" },
+  }));
+  expect(diagnoseRecurringBoundaryEdit({ ...account, platform: "atcoder" }, foreign))
+    .toMatchObject({ status: "insufficient-evidence", reason: "unsupported-platform" });
 });
