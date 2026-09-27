@@ -301,7 +301,7 @@ Fallback / checkpoint: If missing export and deletion cannot both fit, create or
 Out of scope: No hosted privacy system, remote telemetry, cross-device sync or broad storage rewrite.
 
 ## RC-020 Five-volunteer pilot preparation
-Status: READY
+Status: DONE
 Priority: P20
 Timebox: one run, <= 30 min
 Depends on: RC-019

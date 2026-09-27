@@ -591,3 +591,33 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-019 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-020
+Status: DONE
+Objective: Prepare a repeatable, consent-based five-volunteer local pilot guide and verify its synthetic rehearsal.
+Started UTC: 2026-09-27T08:30:11Z (first local shell clock after initial GitHub tool checks).
+
+Acceptance checks:
+- Document local install, synthetic import/report/export/delete, purpose, limits, individual import permission and separate optional feedback sharing.
+- Provide short questions on diagnosis accuracy, practice usefulness, understanding/attempt and an optional correction, including abstention/not-applicable choices without requesting raw submissions.
+- Exercise the synthetic flow and state live import, source coverage, browser controls and consent gates honestly.
+
+Changed:
+- `docs/pilot-guide.md` — participant script, fixture rehearsal, feedback form and readiness table. Pilot remains not ready.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — close RC-020 while leaving RC-014 and RC-021 WAITING.
+
+Verified:
+- `timeout 240s npm ci --ignore-scripts --no-audit --no-fund` — PASS, 46 locked packages installed.
+- `timeout 120s npm run build:extension` — PASS; TypeScript, both bundles and synthetic IndexedDB import/report, possible finding, abstention, account export, canceled and confirmed deletion/reopen checks.
+- Manual Chrome/Chromium walkthrough — NOT RUN: no browser executable was found in this environment. The guide flags this as a gate.
+- Guide links, feedback coverage and `git diff --check` — see final checkpoint verification below.
+
+Assumptions / decisions:
+- The one-page metadata fixture yields insufficient source evidence, not the two-problem finding; the build script uses separate invented source-complete records for that state.
+- The guide requests feedback separately from local import permission and asks for no private exports or raw submissions. No volunteers were contacted or enrolled; synthetic results are not participant feedback.
+
+Remaining / next:
+- RC-014 is a distinct owner-deferred run requiring one student's explicit own-account permission and a bounded local check. Real source coverage and real-browser controls must also pass before pilot recruitment/use. RC-021 remains WAITING for permitted feedback; do not start it in this run.
+
+Commit:
+- This entry is committed with the RC-020 checkpoint; use the Git commit containing it as its hash.
