@@ -28,4 +28,4 @@ Remaining / next:
 - RC-002 — verify Codeforces data-access paths and record authoritative evidence.
 
 Commit:
-- This Run 1 checkpoint; the primary GitHub commit SHA will be recorded in a follow-up log commit.
+- `681ed4914aed6a00388cebd294d07d29d043804a` — primary RC-001 checkpoint; this log update is a follow-up commit.
