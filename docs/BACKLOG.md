@@ -15,7 +15,7 @@ Acceptance: AGENTS.md , docs/PROJECT_STATE.md , docs/BACKLOG.md , docs/DECISIONS
 Out of scope: No application code, no API integration, no architecture debate, no questions to the owner.
 
 ## RC-002 Codeforces access research
-Status: READY
+Status: RESEARCH_COMPLETE
 Priority: P02
 Timebox: one run, <= 30 min
 Depends on: RC-001
@@ -27,7 +27,7 @@ Acceptance: Create docs/research/codeforces-data-access.md . Verify, from author
 Out of scope: No scraping bypass, no credentials, no broad multi-platform research, no production crawler.
 
 ## RC-003 Normalized evidence contract
-Status: WAITING
+Status: READY
 Priority: P03
 Timebox: one run, <= 30 min
 Depends on: RC-002

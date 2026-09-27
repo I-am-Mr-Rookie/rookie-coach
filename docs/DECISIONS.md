@@ -23,3 +23,7 @@ This log separates the owner's stated direction from reversible first-milestone 
 - **Permanent license:** owner has not selected one; add no license autonomously. Public visibility does not itself grant reuse permission.
 - **Other platforms, cross-platform identity proof, cloud retention, hosted account model, billing, and LLM provider:** revisit after the Codeforces local slice; do not ask during RC-001 through RC-012.
 - **Exact curriculum and formal evaluation protocol:** record candidate metrics without claiming causal weaknesses; settle before evaluation or public product commitments.
+
+## RC-002 research update (2026-09-27)
+
+The current Codeforces `user.status` documentation advertises `includeSources` for one's own account. This supersedes the earlier uncertainty about whether the official API has any source option; it does not establish the authenticated payload shape or reliable source coverage. Keep fixture/user-export parsing as the RC-009 prototype path until an authorized local API test confirms those details. See [the access research](research/codeforces-data-access.md). This is a reversible implementation order, not a new product commitment.

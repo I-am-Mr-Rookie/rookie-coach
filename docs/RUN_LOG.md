@@ -29,3 +29,27 @@ Remaining / next:
 
 Commit:
 - `681ed4914aed6a00388cebd294d07d29d043804a` — primary RC-001 checkpoint; this log update is a follow-up commit.
+
+## Run 2026-09-27 / RC-002
+Status: RESEARCH_COMPLETE
+Objective: Establish current legitimate Codeforces history and own-source access for one student.
+
+Changed:
+- `docs/research/codeforces-data-access.md` — dated official findings, limits, uncertainties, and fixture-first acquisition plan.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/DECISIONS.md` — mark research complete, activate RC-003, and record the newly documented own-account API source option without claiming a live integration.
+- `docs/RUN_LOG.md` — this handoff.
+
+Verified:
+- Codeforces API introduction, methods, and return-object references plus Codeforces source-viewing guidance — reviewed 2026-09-27; `user.status` has 1-based paging, one request per two seconds, and own-account `includeSources`, while the documented `Submission` object omits source payload details.
+- `python3` targeted document/link/status checks — PASS (see local verification in this run).
+- `git diff --check` — PASS.
+- `git status --short` and `git diff --stat` — expected documentation files only.
+
+Assumptions / decisions:
+- A 100-record page size and two-second minimum delay are conservative prototype choices. Signed-request behavior and source response shape need an authorized local check; no student data or credentials were used.
+
+Remaining / next:
+- RC-003 — versioned normalized evidence contracts and synthetic sanitized Codeforces fixture.
+
+Commit:
+- This entry is committed with the RC-002 research checkpoint; use the Git commit containing this entry as its hash.
