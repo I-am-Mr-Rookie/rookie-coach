@@ -241,7 +241,7 @@ Fallback / checkpoint: If no candidate can pass a meaningful counterexample test
 Out of scope: No broad weakness score, comprehensive bug detection, inferred topic mastery or personalized curriculum.
 
 ## RC-017 One practice action per supported diagnosis
-Status: READY
+Status: DONE
 Priority: P17
 Timebox: one run, <= 30 min
 Depends on: RC-016
@@ -261,7 +261,7 @@ Fallback / checkpoint: Keep the action self-contained if a suitable external pro
 Out of scope: No study schedule, problem recommender engine, mastery prediction or promised improvement.
 
 ## RC-018 Coaching report integration
-Status: WAITING
+Status: READY
 Priority: P18
 Timebox: one run, <= 30 min
 Depends on: RC-017

@@ -491,3 +491,35 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-016 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-017
+Status: DONE
+Objective: Give the supported loop-bound edit finding one concrete, deterministic practice action.
+Started UTC: first recorded clock reading 2026-09-27T07:57:12Z (initial repository checks preceded this reading).
+
+Acceptance checks:
+- A supported finding from two distinct problems yields one self-contained exercise tied to the observed edit, with an explicit completion check and no causal claim.
+- Insufficient evidence, an unknown rule, or a finding with only one supported problem yields no action.
+- Focused tests, package typechecks and the existing full test/build path pass.
+
+Changed:
+- `packages/core/src/practice.ts`, `packages/core/src/index.ts` — one action for the supported rule; no action for unknown or insufficient evidence.
+- `packages/core/src/practice.test.ts` — synthetic end-to-end diagnosis-to-action example and abstention cases; tests first failed because the export did not exist.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — close RC-017 and activate RC-018.
+
+Verified:
+- `timeout 120s npx vitest run packages/core/src/practice.test.ts` — PASS, two tests after the expected RED run.
+- `timeout 120s npm run typecheck` — PASS, core and Codeforces packages.
+- `timeout 120s npm test` — PASS, 25 tests across seven files.
+- `timeout 120s npm run build:extension` — PASS, extension typecheck, bundle and synthetic import-to-report check.
+- `git diff --check` — PASS.
+
+Assumptions / decisions:
+- The exercise uses an invented three-element array to practice tracing valid indices; it does not claim the observed source edits caused either verdict. No external problem link, ranking system or new dependency was needed.
+- The core action is not displayed in the extension report until RC-018. No real student data or live platform access was used.
+
+Remaining / next:
+- RC-018 — show the finding, its one action and abstention/coverage states locally. RC-014 remains WAITING for explicit own-account permission.
+
+Commit:
+- This entry is committed with the RC-017 checkpoint; use the Git commit containing it as its hash.

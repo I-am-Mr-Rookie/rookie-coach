@@ -38,3 +38,4 @@ export { IndexedDbEvidenceStore, MemoryEvidenceStore, type EvidenceStore } from 
 export { summarizeEvidence, type EvidenceSummary } from "./summary.js";
 export { compareAttempts, type AttemptComparison } from "./comparison.js";
 export { diagnoseRecurringBoundaryEdit, type BoundaryDiagnosis } from "./diagnosis.js";
+export { practiceForDiagnosis, type PracticeAction } from "./practice.js";
