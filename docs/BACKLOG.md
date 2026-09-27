@@ -161,7 +161,7 @@ Planning update: 2026-09-27. These are future instructions, not completed runs. 
 - A repeated verdict or tag does not establish a programming misconception. State observations, hypotheses and unavailable evidence honestly. A rule must abstain when its required evidence is missing. Do not treat passing fixtures as live validation or pilot ratings as proof of learning improvement.
 
 ## RC-013 M0 integration and coaching readiness review
-Status: READY
+Status: RESEARCH_COMPLETE
 Priority: P13
 Timebox: one run, <= 30 min
 Depends on: RC-012
@@ -201,7 +201,7 @@ Fallback / checkpoint: Missing permission or local access means BLOCKED, with a 
 Out of scope: No bulk collection, credentials in the repository, general crawler, enrollment of all five volunteers or automatic outreach.
 
 ## RC-015 Attempt comparison evidence
-Status: WAITING
+Status: READY
 Priority: P15
 Timebox: one run, <= 30 min
 Depends on: RC-013

@@ -378,3 +378,35 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-012 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-013
+Status: RESEARCH_COMPLETE
+Objective: Review the merged M0 import-to-report integration and define a defensible coaching candidate without shipping a diagnosis.
+Started UTC: first recorded clock reading 2026-09-27T06:51:29Z (the initial tool step preceded this reading).
+
+Acceptance checks:
+- Record the tested commit, exact synthetic commands/results, and honest live/source/data-control inventory.
+- Define one narrow pattern with explicit source/language needs and abstention limits.
+- Add a bounded repair prerequisite only if the synthetic integration reveals a blocking defect.
+
+Changed:
+- `docs/research/m0-readiness.md` — review results, coverage limits and a testable GNU C++20 comparator-revision candidate.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — close RC-013, leave consent-gated RC-014 waiting, and activate independent fixture-based RC-015.
+
+Verified:
+- `timeout 240s npm ci --ignore-scripts --no-audit --no-fund` — PASS, locked dependencies installed.
+- `timeout 120s npm run build:extension` — PASS, bundled popup stores two synthetic records in fake IndexedDB and report shows the expected counts and one available/one unavailable source; malformed JSON reports an error.
+- `timeout 120s npm test` — PASS, 13 tests across four files.
+- `timeout 120s npm run typecheck` — PASS, core and Codeforces packages.
+- `timeout 30s python3 scripts/check-evidence-fixture.py` — PASS, evidence contract fixture.
+- Manual Chrome/Chromium load — NOT RUN: no browser executable in this environment; no live student/API access or identity proof attempted.
+
+Assumptions / decisions:
+- No blocking defect was found in the synthetic path. The README metadata-only demo has two `not-collected` sources; the build runner exercises the optional invented export and therefore reports one `available` and one `unavailable`.
+- The comparator hypothesis is possible evidence of a revision, not proof of a mistake's cause. Current fixture cannot support it. No live collection, deletion/export control or pilot result is claimed.
+
+Remaining / next:
+- RC-015 — fixture-based paired-attempt comparison and missing-evidence handling. RC-014 waits separately for explicit permission from one student for their own local live check.
+
+Commit:
+- This entry is committed with the RC-013 checkpoint; use the Git commit containing it as its hash.
