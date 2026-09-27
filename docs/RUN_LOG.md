@@ -643,11 +643,12 @@ Verified:
 - `npm ci --ignore-scripts --no-audit --no-fund` — PASS.
 - `npm run build:extension` — PASS, including existing synthetic IndexedDB popup/report check.
 - Unpacked extension enabled in the owner's local Chrome — PASS, confirmed by the Chrome extensions page.
-- Explicit local-file import, report normalization, repeated import, live account isolation and normal-access source check — NOT RUN. Computer-use URL-safety verification stopped the browser action before import; this does not show a product defect.
+- Computer-use URL-safety verification stopped the agent's browser action before import; this does not show a product defect. The owner then used the popup and saved a private account export outside the repository. Its 10 submission IDs, verdicts and language labels matched the API page; all 10 sources were `not-collected`. The account key was a full Codeforces profile URL, whose final handle segment matched the page's sole author handle. The popup accepted the URL rather than requiring a bare handle; this is an input-validation/labeling issue, not a foreign-account import.
+- The owner reported the import and repeat worked; the final export still has 10 records. The report UI and repeat sequence were not independently observed. Live account isolation and normal-access source check — NOT RUN.
 - Authenticated `includeSources` — NOT TESTED; no keys, cookies or secrets were used.
 
 Remaining / next:
-- Resume RC-014 in local Chrome using the saved private page, select it through the popup, compare report aggregates, reimport, and verify another account remains isolated. One page cannot establish full-history coverage. Leave unobserved source as `not-collected`.
+- Resume RC-014 with bounded bare-handle input validation and synthetic valid/profile-URL tests. Enter the bare handle, reimport the saved private page, remove the URL-keyed local copy through the account controls, then compare the report and verify another account remains isolated. One page cannot establish full-history coverage. Leave unobserved source as `not-collected`.
 - RC-021 remains WAITING; pilot readiness is not established. No synthetic regression beyond the existing build check was needed because application code did not change.
 
 Commit:

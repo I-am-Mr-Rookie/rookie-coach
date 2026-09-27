@@ -185,7 +185,7 @@ Status: WAITING
 Priority: P14
 Timebox: one run, <= 30 min
 Depends on: RC-013
-Activation: RC-013 review and relevant repairs are complete; the owner explicitly permitted a bounded import of their own history. A partial local check was recorded on 2026-09-27; resume the remaining browser import acceptance checks from [the checkpoint](research/live-import-check.md).
+Activation: RC-013 review and relevant repairs are complete; the owner explicitly permitted a bounded import of their own history. A partial local check was recorded on 2026-09-27. A full profile URL was accepted as the account key although its final handle segment matched the page author; add bare-handle validation, correct the local account label and resume remaining browser checks from [the checkpoint](research/live-import-check.md).
 
 Goal: Verify the existing acquisition path on one consenting account and report actual source availability.
 
