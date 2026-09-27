@@ -34,7 +34,7 @@ export interface Submission extends StudentAccount {
   sourceCapturedAt?: string;
 }
 
-export { IndexedDbEvidenceStore, MemoryEvidenceStore, type EvidenceStore } from "./storage.js";
+export { MemoryEvidenceStore, type EvidenceStore } from "./storage.js";
 export { summarizeEvidence, type EvidenceSummary } from "./summary.js";
 export { compareAttempts, type AttemptComparison } from "./comparison.js";
 export { diagnoseRecurringBoundaryEdit, type BoundaryDiagnosis } from "./diagnosis.js";

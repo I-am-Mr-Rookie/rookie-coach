@@ -44,3 +44,18 @@ The owner requested that the post-RC-012 plan be recorded for future workers. Th
 | Later decisions | Permanent license, paid spending, remote student-data processing, hosting, other platforms and billing remain deferred until a concrete need arises. | Existing boundaries retained |
 
 The [post-M0 backlog](BACKLOG.md#post-m0-pilot) is the operational specification. Five volunteers is a recruitment target, not a completion claim. Synthetic tests establish implementation behavior only; live validation and pilot feedback are separate gates.
+
+## One-click Markdown export (owner direction, 2026-09-27)
+
+The owner found the file-import flow too complicated and replaced it. This supersedes the RC-007 to RC-019 extension flow (file import, IndexedDB store, in-extension report, export/delete controls); the core summary, comparison and diagnosis code remains as a library but is no longer used by the extension.
+
+| Area | Decision | Basis |
+| --- | --- | --- |
+| User flow | Install the unzipped extension, sign in to Codeforces, open the extension, confirm or type the handle, click once. The extension does the rest and downloads one file. | Owner-stated |
+| Output | One Markdown file with a fixed, parseable structure ([format](codeforces-markdown-v1.md)); chosen over JSON because code and examples stay unescaped and cost fewer tokens. It must be self-contained for an LLM or judge: profile standing, problem link, statement, examples, verdicts and code. | Owner chose Markdown; content owner-stated |
+| Student status | Include current rating, rank, max rating/rank, contribution and recent rated contests. Taken from the official `user.info` and `user.rating` API (the same data as the profile page) instead of parsing profile HTML; no real name or city. | Owner-stated; API source is a working default |
+| Source code | Default: read the user's own submission pages in their signed-in tab, one request per 2 seconds, only when the typed handle matches the signed-in handle. Backup: the official API `includeSources` with the user's own key and secret, used once and never stored. Stop on any browser check or refusal; never work around it. | Owner chose page reading plus API backup; pacing and stop rules are safety defaults |
+| History size | Most recent 250 submissions by default; 100, 500, 1000 or all are selectable. | Owner-stated |
+| Storage | No database, report page or temporary files. Everything is held in memory until the one download. | Owner-stated |
+| Permissions | `activeTab` and `scripting` only; no host permissions or background script. | Working default (smallest permission set) |
+| Distribution | A ZIP of the built extension loaded with Developer mode, Load unpacked. Chrome Web Store publishing (a paid developer account) remains an owner decision. | Working default |

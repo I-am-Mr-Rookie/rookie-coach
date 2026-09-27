@@ -1,7 +1,15 @@
-# Project State
+﻿# Project State
 
 Updated: 2026-09-27
-Last run: RC-021 — BLOCKED
+Last run: RC-023 — PARTIAL_CHECKPOINT (first live exports worked after one retry; repairs made, one re-run needed)
+
+## Current product (RC-022)
+
+The extension is now a one-click exporter. On a signed-in Codeforces tab the popup detects the handle and, with one click, writes a single Markdown file ([format](codeforces-markdown-v1.md)): the student's rating, rank, contribution and recent rated contests, then for each problem its link, limits, statement, examples and every attempt with verdict, failing test, time, memory, language and code. It reads the official API plus the user's own problem and submission pages at one request per 2 seconds, stops on any Codeforces browser check, keeps nothing but the downloaded file, and asks only for `activeTab` and `scripting`. An experimental API-key backup requests code through `includeSources`. `npm run package:extension` builds `release/rookie-coach-extension.zip`.
+
+Live result (RC-023, owner's own account, 2026-09-27): the second run collected all 69 submissions' code and all 27 statements (about 28,400 tokens). This confirms `#program-source-text` and the statement parser live. The first run stopped at once because Cloudflare's detection script on normal pages was mistaken for a browser check. That is fixed, along with the ZIP layout (files now at the root), Russian titles and ranks (`lang=en`, `?locale=en`), code block languages, a file name with the time to the second, and `complete` / `approx_tokens` header lines. A real check now pauses so the student can pass it themselves and press Continue. 34 unit tests, typechecks and the extension build pass. **Next:** the owner re-runs one export with the new ZIP to close RC-023.
+
+The sections below describe the earlier file-import pipeline (RC-001 to RC-021). Its IndexedDB store, report page and file import were removed in RC-022; the core summary and diagnosis code remains as an unused library.
 
 ## Milestone M0
 

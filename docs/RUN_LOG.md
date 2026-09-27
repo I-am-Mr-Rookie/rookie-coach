@@ -1,4 +1,4 @@
-# Run Log
+﻿# Run Log
 
 Append one compact entry per run. Never replace earlier entries. The terminal state must be `DONE`, `PARTIAL_CHECKPOINT`, `BLOCKED`, or `RESEARCH_COMPLETE`.
 
@@ -749,3 +749,65 @@ Blocker:
 
 Commit:
 - This entry is committed with the RC-021 blocked checkpoint; use the Git commit containing it as its hash.
+## Run 2026-09-27 / RC-022 one-click Markdown export
+Status: DONE
+Objective: Replace the file-import flow with a one-click export of one self-contained Markdown file, as directed by the owner.
+
+Acceptance checks (before edits):
+1. Popup detects or accepts a handle, defaults to 250 recent submissions, and starts collection with only `activeTab` and `scripting`.
+2. The file contains profile standing, problem link, limits, statement, examples and every attempt with verdict and code; code only for the signed-in account; no key or secret in the file.
+3. Requests are 2 seconds apart, browser checks stop the run with partial results kept, nothing is persisted, and tests, typechecks and the extension check pass.
+
+Changed:
+- `packages/codeforces/src/pages.ts`, `markdown.ts`, `collect.ts` (+ `collect.test.ts`, synthetic `fixtures/codeforces-problem-page.html` and `codeforces-submission-page.html`) � page reading, Markdown bundle, collection with profile, pacing, retries, stop rules and the API-key backup.
+- `extension/popup.*`, `extension/collector.ts`, `extension/manifest.json`, `extension/chrome.d.ts` � one-click popup and an in-tab collector with a progress panel and stop button.
+- Removed `extension/import.*`, `extension/report.*` and the IndexedDB store; dropped `fake-indexeddb`; added `linkedom` for DOM tests and `scripts/package-extension.mjs` for the ZIP.
+- `README.md`, `docs/codeforces-markdown-v1.md`, `docs/DECISIONS.md`, `docs/BACKLOG.md` (RC-022, RC-023), `docs/how-it-works.html`.
+
+Verified:
+- `npm test` � 33 tests PASS. `npm run typecheck` � PASS (core, codeforces, extension).
+- `npm run package:extension` � build and `scripts/check-extension.mjs` PASS; the ZIP extracts with Windows `Expand-Archive` and matches the build.
+- Firecrawl CLI scrape of public pages: problem 4A (older example format) and 1850A (line-per-element example format) matched the parser's selectors; the page header uses absolute links, so handle detection matches `/profile/` anywhere in the link. A submission page returned "Please wait. Your browser is being checked", so the source selector is unconfirmed live. The API and some pages returned Cloudflare 504 during the session.
+
+Not verified:
+- Loading the extension in a real Chrome and a live run on a signed-in account (RC-023).
+- The API-key backup's `includeSources` response.
+
+Remaining / next:
+- RC-023: owner runs one export of their own account and reports the result.
+
+## Run 2026-09-27 / RC-023 first live export and repairs
+Status: PARTIAL_CHECKPOINT
+Objective: Fix the defects the owner found in the first live exports of their own account.
+
+Owner findings (files kept outside the repository):
+1. Chrome rejected the dropped ZIP ("Could not unzip extension for install") because every file was inside a `rookie-coach/` folder. A ZIP with the files at the root installed and worked.
+2. Run 1 (limit 250): profile and all 69 submissions listed, but `source_included: 0/69`, `statements_included: 0/27`, with the note "browser check". The owner did not press Stop.
+3. Run 2 (all), minutes later: `source_included: 69/69`, `statements_included: 27/27`. About 113,000 characters, roughly 28,400 tokens.
+4. Problem titles and ranks came back in Russian.
+
+Acceptance checks (before edits):
+1. The ZIP has `manifest.json` at its root; a normal Codeforces page carrying Cloudflare's detection script is not treated as a browser check.
+2. API calls use `lang=en` and problem pages `?locale=en`; every code block names a language.
+3. The file name carries the time to the second; the header states `complete` and `approx_tokens`; tests, typechecks and the extension build pass.
+
+Cause of run 1: a Firecrawl scrape of the raw HTML of problem 4A showed that ordinary pages can include `/cdn-cgi/challenge-platform/scripts/jsd/main.js` (Cloudflare's bot-detection script). `isBrowserCheck` matched `challenge-platform`, so the first problem page was treated as a check and the run stopped. The script is not on every response, which fits run 2 succeeding.
+
+Changed:
+- `packages/codeforces/src/pages.ts` � browser check matches only real challenge markers (`Your browser is being checked`, `_cf_chl_opt`, `cf-chl-`, `Just a moment` / `Attention Required` titles, HTTP 403/429); `englishPage`; statement `<pre>` blocks labelled `text`.
+- `packages/codeforces/src/collect.ts` � `lang=en` on every API call (included in the API-key signature); English problem pages; the stop note names the URL and HTTP status once, items say "the collection stopped early"; optional `waitForCheck` pauses for the student to pass a real check and then requests the same page again.
+- `packages/codeforces/src/markdown.ts` � wider language map (fixed PascalABC.NET, which matched Scala), `complete`, `approx_tokens`, `bundleFileName`.
+- `extension/collector.ts` � Continue button during a check, timestamped file name, finish message warns when incomplete.
+- `scripts/package-extension.mjs` � files at the ZIP root plus a `dist/` entry; it reads the ZIP back and asserts the layout.
+- Tests and fixture: the synthetic problem page now carries the detection script; new tests for the pause, stop note, language map, file name and header lines.
+
+Verified:
+- `npm test` � 34 tests PASS. `npm run typecheck` � PASS. `npm run package:extension` � build, extension check and ZIP layout assertion PASS; `Expand-Archive` gives `manifest.json`, `popup.html`, `dist/popup.js`, `dist/collector.js` at the root.
+
+Not verified:
+- A live run with the repaired build, the Continue flow against a real Codeforces check, and whether `?locale=en` changes a Russian-interface user's saved language.
+
+Follow-up (owner request, same day): with **All** and more than 200 submissions, the export is a ZIP of Markdown files of up to 200 submissions each (`splitBundle`, a stored-ZIP writer in `packages/codeforces/src/zip.ts`); other options unchanged. `npm test` 35 PASS, typecheck PASS, `npm run package:extension` PASS; a writer-made ZIP extracted with `Expand-Archive` with correct names, dates and UTF-8 text.
+
+Remaining / next:
+- Owner re-runs one export with the new ZIP and confirms English titles, `complete: yes` and the new file name.

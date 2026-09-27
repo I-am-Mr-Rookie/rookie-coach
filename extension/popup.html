@@ -5,33 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rookie Coach</title>
   <style>
-    body { width: 300px; margin: 0; padding: 16px; font: 14px/1.4 system-ui, sans-serif; color: #17233a; }
-    h1 { margin: 0 0 12px; font-size: 18px; }
-    label { display: block; margin-bottom: 5px; font-weight: 600; }
-    input { box-sizing: border-box; width: 100%; padding: 8px; margin-bottom: 12px; }
-    button { padding: 8px 12px; cursor: pointer; }
-    p { margin: 12px 0; }
-    #status { min-height: 2.8em; }
+    body { width: 320px; margin: 0; padding: 16px; font: 14px/1.45 system-ui, sans-serif; color: #17233a; }
+    h1 { margin: 0 0 6px; font-size: 18px; }
+    p { margin: 8px 0; }
+    label { display: block; margin: 10px 0 4px; font-weight: 600; }
+    input, select { box-sizing: border-box; width: 100%; padding: 7px 8px; font: inherit; }
+    button { margin-top: 12px; padding: 9px 12px; width: 100%; font: inherit; font-weight: 600; cursor: pointer; }
+    details { margin-top: 12px; }
+    summary { cursor: pointer; color: #45506a; }
+    .muted { color: #5b6475; font-size: 13px; }
+    .account { padding: 8px 10px; border-radius: 6px; background: #eef3fb; }
+    .account.warn { background: #fdf2e3; }
+    #status { min-height: 1.5em; }
   </style>
   <script type="module" src="dist/popup.js"></script>
 </head>
 <body>
   <h1>Rookie Coach</h1>
-  <p>Import only your own Codeforces history, with your permission. Files and history stay in this browser.</p>
-  <form id="import-form">
+  <p class="muted">Saves your Codeforces problems, statements, example tests, verdicts and code as one Markdown file for an AI coach or judge.</p>
+
+  <section id="not-codeforces" hidden>
+    <p>Open Codeforces in this tab and sign in, then click the extension again.</p>
+    <button id="open" type="button">Open codeforces.com</button>
+  </section>
+
+  <form id="form" hidden>
+    <p id="account" class="account"></p>
     <label for="handle">Codeforces handle</label>
-    <input id="handle" name="handle" autocomplete="off" required>
-    <label for="metadata">Codeforces user.status JSON</label>
-    <input id="metadata" type="file" accept=".json,application/json" required>
-    <label for="sources">Your source export JSON (optional)</label>
-    <input id="sources" type="file" accept=".json,application/json">
-    <button type="submit">Start import</button>
+    <input id="handle" autocomplete="off" spellcheck="false" required>
+    <label for="limit">Submissions</label>
+    <select id="limit">
+      <option value="100">Most recent 100</option>
+      <option value="250" selected>Most recent 250</option>
+      <option value="500">Most recent 500</option>
+      <option value="1000">Most recent 1000</option>
+      <option value="all">All (over 200: a ZIP of 200-submission files)</option>
+    </select>
+    <details>
+      <summary>Backup: use an API key instead (experimental)</summary>
+      <p class="muted">Only if reading your submission pages fails. Create a key in Codeforces settings, API. The key is used once and is never saved or written to the file.</p>
+      <label for="api-key">API key</label>
+      <input id="api-key" autocomplete="off" spellcheck="false">
+      <label for="api-secret">API secret</label>
+      <input id="api-secret" type="password" autocomplete="off">
+    </details>
+    <button id="start" type="submit">Create Markdown file</button>
+    <p class="muted">About 2 seconds per page, so 250 submissions take roughly 10–15 minutes. Keep the Codeforces tab open; you can close this popup.</p>
   </form>
-  <p><a href="report.html" target="_blank" rel="noopener">View local evidence report</a></p>
-  <p>Only selected files are imported when you press Start import. Nothing collects in the background. To stop, do not import more files; deleting an account also disconnects its saved handle.</p>
-  <p><button id="export" type="button">Export this handle's evidence</button></p>
-  <p><button id="delete" type="button">Delete this handle's local evidence</button></p>
-  <p>Exports include submission history and may include source code. Keep the downloaded file private; do not upload it to public GitHub. Deletion cannot remove copies you downloaded or the original input files.</p>
-  <p id="status" role="status" aria-live="polite">Select files from your own account, then start import. No live website connection is used.</p>
+
+  <p id="status" role="status" aria-live="polite"></p>
 </body>
 </html>

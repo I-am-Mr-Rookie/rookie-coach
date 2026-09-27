@@ -1,5 +1,7 @@
 # Five-volunteer local pilot guide (preparation only)
 
+> **Outdated:** this guide describes the file-import flow removed in RC-022. The extension now creates one Markdown file with one click; see the README. Revise this guide before any pilot.
+
 **Status: not ready to recruit or import real history.** This is an informal product-feedback pilot for up to five volunteers, not a university study or evidence of learning improvement. The owner handles recruitment. No one is enrolled or has consented yet. Complete the [readiness gates](#readiness-gates) before inviting a participant to use their own data.
 
 ## What to tell a prospective volunteer

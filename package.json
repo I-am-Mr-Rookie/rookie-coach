@@ -2,16 +2,21 @@
   "name": "rookie-coach",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
-  "workspaces": ["packages/*"],
+  "engines": {
+    "node": ">=22.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build:extension": "tsc -p extension --noEmit && esbuild extension/popup.ts extension/report.ts --bundle --format=iife --platform=browser --outdir=extension/dist && node scripts/check-extension.mjs",
+    "build:extension": "tsc -p extension --noEmit && esbuild extension/popup.ts extension/collector.ts --bundle --format=iife --platform=browser --outdir=extension/dist && node scripts/check-extension.mjs",
+    "package:extension": "npm run build:extension && node scripts/package-extension.mjs",
     "test": "vitest run",
-    "typecheck": "tsc -p packages/core && tsc -p packages/codeforces"
+    "typecheck": "tsc -p packages/core && tsc -p packages/codeforces && tsc -p extension"
   },
   "devDependencies": {
     "esbuild": "0.28.2",
-    "fake-indexeddb": "6.2.5",
+    "linkedom": "0.18.12",
     "typescript": "5.9.3",
     "vitest": "4.0.16"
   }

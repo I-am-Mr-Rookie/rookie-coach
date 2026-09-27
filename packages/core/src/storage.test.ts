@@ -1,7 +1,6 @@
 import { expect, test } from "vitest";
-import { indexedDB as fakeIndexedDB } from "fake-indexeddb";
 import type { StudentAccount, Submission } from "./index.js";
-import { IndexedDbEvidenceStore, MemoryEvidenceStore } from "./storage.js";
+import { MemoryEvidenceStore } from "./storage.js";
 
 const account: StudentAccount = { schemaVersion: 1, platform: "codeforces", namespace: "student", handle: "one" };
 const second: StudentAccount = { ...account, handle: "two" };
@@ -37,28 +36,15 @@ test("upserts by full account and submission ID, retaining source evidence and i
   await expect(store.upsert({ ...submission(account), sourceStatus: "available" })).rejects.toThrow("Invalid evidence submission");
 });
 
-test("IndexedDB persists account-isolated upserts across store instances", async () => {
-  const store = new IndexedDbEvidenceStore(fakeIndexedDB);
-  await store.upsert(submission(account));
+test("deleting one account does not touch other accounts", async () => {
+  const store = new MemoryEvidenceStore();
+  await store.upsert(submission(account, "private source"));
   await store.upsert(submission(second));
-  await store.upsert(submission(account, "print(42)"));
-  const reopened = new IndexedDbEvidenceStore(fakeIndexedDB);
-  expect(await reopened.list(account)).toEqual([submission(account, "print(42)")]);
-  expect(await reopened.list(second)).toEqual([submission(second)]);
-  expect(await reopened.list(third)).toEqual([]);
-});
-
-test("deleting one account persists across reopened stores without touching other accounts", async () => {
-  for (const store of [new MemoryEvidenceStore(), new IndexedDbEvidenceStore(fakeIndexedDB)]) {
-    await store.upsert(submission(account, "private source"));
-    await store.upsert(submission(second));
-    await store.upsert(submission(third));
-    expect(await store.delete(account)).toBe(1);
-    expect(await store.delete(account)).toBe(0);
-    const reopened = store instanceof MemoryEvidenceStore ? store : new IndexedDbEvidenceStore(fakeIndexedDB);
-    expect(await reopened.list(account)).toEqual([]);
-    expect(await reopened.list(second)).toEqual([submission(second)]);
-    expect(await reopened.list(third)).toEqual([submission(third)]);
-    await expect(store.delete({ ...account, handle: " " })).rejects.toThrow("Invalid evidence account");
-  }
+  await store.upsert(submission(third));
+  expect(await store.delete(account)).toBe(1);
+  expect(await store.delete(account)).toBe(0);
+  expect(await store.list(account)).toEqual([]);
+  expect(await store.list(second)).toEqual([submission(second)]);
+  expect(await store.list(third)).toEqual([submission(third)]);
+  await expect(store.delete({ ...account, handle: " " })).rejects.toThrow("Invalid evidence account");
 });

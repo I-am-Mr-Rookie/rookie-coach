@@ -22,3 +22,9 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Packaged extension ZIP
+release/
+
+# Local private exports
+tmp/

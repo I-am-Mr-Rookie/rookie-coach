@@ -341,3 +341,38 @@ Verification: Cross-check counts against the permitted feedback in its private l
 Fallback / checkpoint: With no authorized feedback, remain BLOCKED and record the needed feedback once. With fewer than five responses, report the actual sample and limitations. Do not wait for respondents inside a 30-minute run.
 
 Out of scope: No formal efficacy claim, university approval claim, publication of raw feedback or speculative long-term roadmap.
+
+## One-click Markdown export
+
+Owner direction, 2026-09-27: replace the file-import flow with a one-click export. See [the decisions](DECISIONS.md#one-click-markdown-export-owner-direction-2026-09-27). This supersedes the RC-010, RC-012, RC-018 and RC-019 extension surfaces; their code was removed and remains in Git history.
+
+## RC-022 One-click Codeforces Markdown export
+Status: DONE
+Priority: P22
+Timebox: owner-directed session
+Depends on: RC-013
+
+Goal: From a signed-in Codeforces tab, one click produces one self-contained Markdown file for an LLM or judge.
+
+Acceptance:
+1. The popup detects the signed-in handle or accepts a typed one, offers 250 recent submissions by default (100, 500, 1000, all), and starts collection in the tab with only `activeTab` and `scripting` permissions.
+2. The file contains the student profile (rating, rank, max rating/rank, contribution, recent rated contests), and per problem the link, limits, statement, examples and every attempt with verdict, failing test, time, memory, language and code. Code is collected only for the signed-in account; the API-key backup never stores or writes the key.
+3. Requests are spaced 2 seconds apart; a browser check or refusal stops collection and keeps partial results; nothing is persisted except the downloaded file. Unit tests, typechecks and the built-extension check pass on synthetic pages.
+
+Out of scope: Chrome Web Store publishing, other platforms, hidden judge tests, analysis inside the extension.
+
+## RC-023 Live one-click export check
+Status: PARTIAL (first owner runs 2026-09-27; see the run log. Re-run once with the repaired build to close.)
+Priority: P23
+Timebox: one run, <= 30 min
+Depends on: RC-022
+Activation: The owner loads the unzipped extension in their own Chrome, signs in to Codeforces and runs one export of their own account (a small count such as 100 is enough).
+
+Goal: Confirm the RC-022 export on the real site and fix any markup or pacing defect it shows.
+
+Acceptance:
+1. The popup shows the owner's signed-in handle. The run finishes or stops with a clear note; the downloaded file's header counts are plausible, and source code and statements are included for most problems.
+2. Record which, if any, pages hit a browser check, time out or lack `#program-source-text` / `.problem-statement`, and add a narrow repair if needed. Keep the file and any identifiers out of the repository.
+3. Optionally test the experimental API-key backup once and record whether `includeSources` returns code, and under what field name.
+
+Out of scope: Collecting another student's history, bulk runs, working around any Codeforces check.

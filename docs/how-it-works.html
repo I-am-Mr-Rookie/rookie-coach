@@ -1,0 +1,237 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rookie Coach â€” how it works</title>
+<style>
+  :root {
+    --ink: #1d2433; --muted: #5b6475; --line: #d9dee7; --bg: #f6f7f9;
+    --live: #1f8a4c; --live-bg: #e7f6ec;
+    --syn: #2f6fd1; --syn-bg: #e8f0fc;
+    --gap: #c8372d; --gap-bg: #fdecea;
+    --unt: #7a8190; --unt-bg: #f0f1f3;
+    --out: #6b4fbb; --out-bg: #f1edfb;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+  main { max-width: 1160px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1 { margin: 0 0 4px; font-size: 28px; }
+  h2 { margin: 40px 0 6px; font-size: 20px; }
+  p.lead { margin: 0 0 20px; color: var(--muted); max-width: 820px; }
+  p.note { color: var(--muted); max-width: 900px; margin: 4px 0 14px; }
+  code { font: 13px ui-monospace, SFMono-Regular, Consolas, monospace; background: #eceff4; padding: 1px 5px; border-radius: 4px; }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 20px 0 8px; }
+  .metric { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .metric b { display: block; font-size: 26px; line-height: 1.2; }
+  .metric span { color: var(--muted); font-size: 13px; }
+  .metric.bad b { color: var(--gap); }
+  .metric.good b { color: var(--live); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; border: 2px solid; }
+
+  .scroll { overflow-x: auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 8px; }
+  .canvas { position: relative; width: 1100px; }
+  .canvas svg { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+  .col-title { position: absolute; top: 0; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .node { position: absolute; width: 220px; padding: 10px 12px; border-radius: 10px; border: 2px solid; background: #fff; }
+  .node h3 { margin: 0 0 3px; font-size: 14px; overflow-wrap: anywhere; }
+  .node p { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+  .node small { display: block; margin-top: 6px; font: 11px ui-monospace, Consolas, monospace; color: var(--muted); }
+  .live { border-color: var(--live); background: var(--live-bg); }
+  .syn { border-color: var(--syn); background: var(--syn-bg); }
+  .gap { border-color: var(--gap); background: var(--gap-bg); border-style: dashed; }
+  .unt { border-color: var(--unt); background: var(--unt-bg); border-style: dashed; }
+  .out { border-color: var(--out); background: var(--out-bg); }
+  .edge-label { font-size: 11.5px; fill: var(--muted); paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+
+  .ladder { display: grid; gap: 8px; max-width: 900px; }
+  .step { display: grid; grid-template-columns: 34px 1fr 260px; gap: 12px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+  .step .n { width: 28px; height: 28px; border-radius: 50%; background: var(--syn-bg); color: var(--syn); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .step .no { font-size: 13px; color: var(--muted); }
+  .step .no code { background: var(--unt-bg); }
+  .step.stop { border: 2px solid var(--gap); background: var(--gap-bg); }
+  .step.stop .n { background: var(--gap); color: #fff; }
+  .step.win { border: 2px solid var(--live); background: var(--live-bg); }
+  .step.win .n { background: var(--live); color: #fff; }
+
+  .callout { border-left: 4px solid var(--gap); background: #fff; border-radius: 8px; padding: 14px 18px; margin: 16px 0; max-width: 900px; }
+  .callout h3 { margin: 0 0 4px; font-size: 16px; color: var(--gap); }
+  .callout p { margin: 4px 0; }
+
+  .timeline { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 5px 9px; border-radius: 999px; border: 1.5px solid; background: #fff; white-space: nowrap; }
+  .chip.done { border-color: var(--live); color: var(--live); }
+  .chip.research { border-color: var(--syn); color: var(--syn); }
+  .chip.waiting { border-color: var(--gap); color: var(--gap); border-style: dashed; }
+  footer { margin-top: 40px; font-size: 12.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Rookie Coach: how it works</h1>
+  <p class="lead">Sign in to Codeforces, click the extension, and get one Markdown file with everything an AI coach or judge needs: the student's current standing, and for every problem the statement, example tests, verdicts and code. Snapshot of RC-022, 2026-09-27.</p>
+
+  <div class="metrics">
+    <div class="metric good"><b>1 click</b><span>from a signed-in Codeforces tab to a downloaded file</span></div>
+    <div class="metric good"><b>1 file</b><span>Markdown; nothing else is stored</span></div>
+    <div class="metric good"><b>2</b><span>permissions: activeTab and scripting</span></div>
+    <div class="metric good"><b>33 / 33</b><span>tests pass on synthetic pages</span></div>
+    <div class="metric bad"><b>0</b><span>live runs on a real account yet (RC-023)</span></div>
+  </div>
+
+  <div class="legend">
+    <span><i style="border-color:var(--live);background:var(--live-bg)"></i>Markup confirmed on real Codeforces pages</span>
+    <span><i style="border-color:var(--syn);background:var(--syn-bg)"></i>Built and tested with synthetic pages</span>
+    <span><i style="border-color:var(--unt);background:var(--unt-bg);border-style:dashed"></i>Experimental backup, untested</span>
+    <span><i style="border-color:var(--out);background:var(--out-bg)"></i>You, or the tool that reads the file</span>
+  </div>
+
+  <h2>1. The flow</h2>
+  <p class="note">All the work happens inside your own Codeforces tab, using your normal signed-in session. The popup only starts it, so you can close the popup; keep the tab open.</p>
+  <div class="scroll"><div class="canvas" id="flow1" style="height:640px">
+    <div class="col-title" style="left:20px">You</div>
+    <div class="col-title" style="left:300px">Extension popup</div>
+    <div class="col-title" style="left:580px">Inside the Codeforces tab</div>
+    <div class="col-title" style="left:860px">Output</div>
+
+    <div class="node out" id="install" style="left:20px;top:30px"><h3>Install once</h3><p>Developer mode on, then drop <code>rookie-coach-extension.zip</code> on chrome://extensions (or unzip → Load unpacked).</p></div>
+    <div class="node out" id="signin" style="left:20px;top:210px"><h3>Sign in to Codeforces</h3><p>In a normal Chrome tab. The extension never sees your password.</p></div>
+    <div class="node out" id="click" style="left:20px;top:390px"><h3>Click the extension</h3><p>On that Codeforces tab.</p></div>
+
+    <div class="node syn" id="detect" style="left:300px;top:390px"><h3>Detect your handle</h3><p>Reads the signed-in name from the page header. You can also type a handle.</p><small>extension/popup.ts</small></div>
+    <div class="node syn" id="start" style="left:300px;top:200px"><h3>Choose and start</h3><p>Most recent 250 by default (100, 500, 1000 or all). One button: Create Markdown file.</p></div>
+    <div class="node unt" id="apikey" style="left:300px;top:20px"><h3>Backup: API key</h3><p>Optional. Asks the official API for your code (<code>includeSources</code>). Used once, never saved.</p></div>
+
+    <div class="node syn" id="profile" style="left:580px;top:30px"><h3>Profile and contests</h3><p>Official API <code>user.info</code> and <code>user.rating</code>: rating, rank, contribution, recent contests.</p></div>
+    <div class="node syn" id="list" style="left:580px;top:175px"><h3>Submission list</h3><p>Official API <code>user.status</code>, 100 per request.</p></div>
+    <div class="node live" id="problems" style="left:580px;top:310px"><h3>Problem pages</h3><p>Statement, limits and example tests, one per problem.</p><small>packages/codeforces/src/pages.ts</small></div>
+    <div class="node syn" id="subs" style="left:580px;top:470px"><h3>Submission pages</h3><p>Your code for each attempt. Only when the handle is your signed-in account.</p></div>
+
+    <div class="node syn" id="build" style="left:860px;top:175px"><h3>Build the Markdown</h3><p>Fixed structure; problems newest first, attempts oldest first.</p><small>packages/codeforces/src/markdown.ts</small></div>
+    <div class="node syn" id="file" style="left:860px;top:340px"><h3>codeforces-&lt;handle&gt;-&lt;date&gt;.md</h3><p>Downloaded once. No database, cache or temporary files remain.</p></div>
+    <div class="node out" id="judge" style="left:860px;top:500px"><h3>LLM, judge or tool</h3><p>Reads one self-contained file.</p></div>
+    <svg></svg>
+  </div></div>
+
+  <h2>2. Safety rules the collector follows</h2>
+  <p class="note">These are enforced in <code>packages/codeforces/src/collect.ts</code> and covered by tests.</p>
+  <div class="ladder">
+    <div class="step"><div class="n">1</div><div>One request every <b>2 seconds</b>, the pace Codeforces sets for its API. About 10–15 minutes for 250 submissions.</div><div class="no">progress panel shows time left</div></div>
+    <div class="step"><div class="n">2</div><div>Code is read <b>only for your own signed-in account</b>. Another handle gets problems and verdicts only.</div><div class="no">noted in the file</div></div>
+    <div class="step stop"><div class="n">3</div><div>If Codeforces shows its <b>"browser is being checked"</b> page or refuses requests, the run <b>stops</b> and saves what it has. It never tries to get past the check.</div><div class="no">reason written to Collection notes</div></div>
+    <div class="step"><div class="n">4</div><div>A page that times out (for example a 504) is retried once after 5 seconds; after several failures in a row the remaining pages are skipped.</div><div class="no">each gap is labelled in the file</div></div>
+    <div class="step"><div class="n">5</div><div><b>Stop and save what I have</b> ends the run early and still downloads the file.</div><div class="no">button on the page</div></div>
+    <div class="step win"><div class="n">6</div><div>Nothing is stored except the one download. No key, secret, cookie, real name or city is written to the file.</div><div class="no">checked by tests</div></div>
+  </div>
+
+  <h2>3. What the file looks like</h2>
+  <p class="note">Full rules in <code>docs/codeforces-markdown-v1.md</code>. Headings and <code>key: value</code> lines are fixed so a program can parse them; code stays exactly as written.</p>
+  <pre style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto;font:12.5px/1.5 ui-monospace,Consolas,monospace;max-width:900px"># Codeforces submissions for &lt;handle&gt;
+format: rookie-coach-codeforces-md/1
+submissions: 250 · problems: 171 · source_included: 244/250 · statements_included: 169/171
+
+## Student profile
+rating: 1234 · rank: pupil · max_rating: 1300 · contribution: 5 · rated_contests: 17
+### Recent rated contests (newest 10)
+| Date | Contest | Place | Rating change | New rating |
+
+## Problem 1850A: To My Critics
+url, rating, tags, time_limit, memory_limit
+### Statement / ### Input / ### Output
+### Example 1   input: ```text …```   expected_output: ```text …```
+### Note
+### Attempts
+#### Submission 123: Wrong answer on test 3   (verdict, failed_on_test, time_ms, memory_kb, language)
+```cpp  …your code…  ```
+#### Submission 124: Accepted
+```cpp  …your code…  ```</pre>
+  <p class="note">The numbers above are illustrative, not from a real run.</p>
+
+  <h2>4. Where things stand</h2>
+  <div class="timeline">
+    <span class="chip done">RC-001 to RC-020 earlier file-import pipeline</span>
+    <span class="chip done">RC-022 One-click Markdown export (synthetic tests pass)</span>
+    <span class="chip waiting">RC-023 Live export on your own account (next)</span>
+  </div>
+  <div class="callout">
+    <h3>What still needs a real run</h3>
+    <p>Problem-page markup was checked against real Codeforces pages. The submission-page code selector could not be checked, because the scraper got Codeforces' browser check, and the API was timing out. One export of your own account (RC-023) will confirm those, and whether the experimental API-key backup returns code.</p>
+  </div>
+
+  <footer>Plain HTML, CSS and a small script that draws the arrows; no external files.</footer>
+</main>
+<script>
+const colors = { live: "#1f8a4c", syn: "#2f6fd1", gap: "#c8372d", unt: "#7a8190", ink: "#8a93a3" };
+
+const graphs = {
+  flow1: [
+    ["install", "signin", ""],
+    ["signin", "click", ""],
+    ["click", "detect", "opens popup"],
+    ["detect", "start", ""],
+    ["start", "profile", "", "syn"],
+    ["start", "list", "runs in the tab", "syn"],
+    ["apikey", "list", "backup", "unt"],
+    ["list", "problems", "", "syn"],
+    ["profile", "build", "", "syn"],
+    ["list", "build", "", "syn"],
+    ["problems", "subs", "own account only", "syn"],
+    ["subs", "build", "", "syn"],
+    ["build", "file", "download", "syn"],
+    ["file", "judge", ""],
+  ],
+};
+
+function box(el, canvas) {
+  const a = el.getBoundingClientRect(), c = canvas.getBoundingClientRect();
+  return { cx: a.left - c.left + a.width / 2, cy: a.top - c.top + a.height / 2, hw: a.width / 2, hh: a.height / 2 };
+}
+
+function edgePoint(b, dx, dy, pad) {
+  const t = Math.min(dx ? (b.hw + pad) / Math.abs(dx) : Infinity, dy ? (b.hh + pad) / Math.abs(dy) : Infinity);
+  return [b.cx + dx * t, b.cy + dy * t];
+}
+
+function draw(id) {
+  const canvas = document.getElementById(id);
+  const svg = canvas.querySelector("svg");
+  const ns = "http://www.w3.org/2000/svg";
+  svg.setAttribute("width", canvas.offsetWidth);
+  svg.setAttribute("height", canvas.offsetHeight);
+  svg.innerHTML = "";
+  const defs = document.createElementNS(ns, "defs");
+  for (const [name, color] of Object.entries(colors)) {
+    defs.insertAdjacentHTML("beforeend",
+      `<marker id="${id}-${name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${color}"/></marker>`);
+  }
+  svg.appendChild(defs);
+  for (const [from, to, label, kind = "ink"] of graphs[id]) {
+    const a = box(document.getElementById(from), canvas), b = box(document.getElementById(to), canvas);
+    const dx = b.cx - a.cx, dy = b.cy - a.cy;
+    const [x1, y1] = edgePoint(a, dx, dy, 2), [x2, y2] = edgePoint(b, -dx, -dy, 4);
+    const line = document.createElementNS(ns, "line");
+    Object.entries({ x1, y1, x2, y2, stroke: colors[kind], "stroke-width": 2, "marker-end": `url(#${id}-${kind})` })
+      .forEach(([k, v]) => line.setAttribute(k, v));
+    if (kind === "gap" || kind === "unt") line.setAttribute("stroke-dasharray", "6 5");
+    svg.appendChild(line);
+    if (label) {
+      const text = document.createElementNS(ns, "text");
+      text.setAttribute("x", (x1 + x2) / 2);
+      text.setAttribute("y", (y1 + y2) / 2 - 6);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("class", "edge-label");
+      text.textContent = label;
+      svg.appendChild(text);
+    }
+  }
+}
+
+function drawAll() { Object.keys(graphs).forEach(draw); }
+window.addEventListener("load", drawAll);
+window.addEventListener("resize", drawAll);
+</script>
+</body>
+</html>

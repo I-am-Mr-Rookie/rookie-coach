@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Rookie Coach",
-  "version": "0.0.1",
-  "description": "Start an import of your own Codeforces history.",
-  "action": { "default_popup": "popup.html" }
+  "version": "0.1.0",
+  "description": "Save your own Codeforces problems, example tests, verdicts and code as one Markdown file.",
+  "action": { "default_popup": "popup.html" },
+  "permissions": ["activeTab", "scripting"]
 }
