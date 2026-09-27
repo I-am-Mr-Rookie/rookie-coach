@@ -2,6 +2,10 @@ import { schemaVersion, type StudentAccount, type Submission } from "@rookie-coa
 
 export const evidenceVersion = schemaVersion;
 
+export type SourceEvidence = Pick<Submission,
+  "schemaVersion" | "platform" | "namespace" | "handle" | "submissionId" |
+  "source" | "sourceStatus" | "captureMethod" | "provenance" | "capturedAt">;
+
 function object(value: unknown): Record<string, unknown> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("Invalid Codeforces response: expected object");
@@ -21,13 +25,48 @@ function integer(value: unknown, minimum: number): number {
   return value as number;
 }
 
-/** Convert one official user.status metadata page. This does not request or infer source access. */
-export function normalizeStatusPage(response: unknown, account: StudentAccount, capturedAt: string): Submission[] {
+function validateContext(account: StudentAccount, capturedAt: string): void {
   if (account.schemaVersion !== 1 || account.platform !== "codeforces" ||
       !account.namespace.trim() || !account.handle.trim()) throw new Error("Invalid Codeforces account");
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(capturedAt) ||
       !Number.isFinite(Date.parse(capturedAt)) ||
       new Date(capturedAt).toISOString().replace(".000Z", "Z") !== capturedAt) throw new Error("Invalid capture time");
+}
+
+/** Parse a student's manually prepared source export, not a Codeforces API response. */
+export function parseUserSourceExport(input: unknown, account: StudentAccount, capturedAt: string): SourceEvidence[] {
+  validateContext(account, capturedAt);
+  const exportData = object(input);
+  const exportedAccount = object(exportData.account);
+  if (exportData.schemaVersion !== 1 || !Array.isArray(exportData.submissions) ||
+      Object.keys(exportData).sort().join() !== "account,schemaVersion,submissions" ||
+      Object.keys(exportedAccount).sort().join() !== "handle,namespace,platform,schemaVersion" ||
+      Object.keys(account).some((key) => exportedAccount[key] !== account[key as keyof StudentAccount])) {
+    throw new Error("Invalid source export or account mismatch");
+  }
+
+  const seen = new Set<string>();
+  return exportData.submissions.map((raw: unknown): SourceEvidence => {
+    const entry = object(raw);
+    const submissionId = nonempty(entry.submissionId);
+    if (!/^[1-9]\d*$/.test(submissionId) || seen.has(submissionId)) throw new Error("Invalid or duplicate source submission ID");
+    seen.add(submissionId);
+    if (Object.keys(entry).sort().join() !== "source,sourceStatus,submissionId" ||
+        (entry.sourceStatus !== "available" && entry.sourceStatus !== "unavailable") ||
+        (entry.sourceStatus === "available" ? typeof entry.source !== "string" || !entry.source.trim() : entry.source !== null)) {
+      throw new Error(`Invalid source evidence for submission ${submissionId}`);
+    }
+    return {
+      ...account, submissionId, source: entry.source as string | null,
+      sourceStatus: entry.sourceStatus, captureMethod: "user-export",
+      provenance: "codeforces:user-provided-source-export", capturedAt,
+    };
+  });
+}
+
+/** Convert one official user.status metadata page. This does not request or infer source access. */
+export function normalizeStatusPage(response: unknown, account: StudentAccount, capturedAt: string): Submission[] {
+  validateContext(account, capturedAt);
 
   const page = object(response);
   if (page.status === "FAILED") throw new Error(`Codeforces API failed: ${String(page.comment ?? "unknown error")}`);

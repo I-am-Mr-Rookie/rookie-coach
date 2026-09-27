@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "account": {
+    "schemaVersion": 1,
+    "platform": "codeforces",
+    "namespace": "synthetic-student",
+    "handle": "fixture_learner"
+  },
+  "submissions": [
+    {
+      "submissionId": "900000002",
+      "sourceStatus": "available",
+      "source": "int main() { return 0; }\n"
+    },
+    {
+      "submissionId": "900000001",
+      "sourceStatus": "unavailable",
+      "source": null
+    }
+  ]
+}

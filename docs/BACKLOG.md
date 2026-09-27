@@ -99,7 +99,7 @@ Acceptance: Create a local storage abstraction suitable for the extension; prefe
 Out of scope: No remote sync, no hosted DB, no multi-user server.
 
 ## RC-009 Source-evidence prototype
-Status: READY
+Status: DONE
 Priority: P09
 Timebox: one run, <= 30 min
 Depends on: RC-008
@@ -111,7 +111,7 @@ Acceptance: If RC-002 confirms a normal user-authorized browser route suitable f
 Out of scope: No CAPTCHA solving, no anti-bot bypass, no credential harvesting, no bulk scraping.
 
 ## RC-010 One-student import vertical slice
-Status: WAITING
+Status: READY
 Priority: P10
 Timebox: one run, <= 30 min
 Depends on: RC-009

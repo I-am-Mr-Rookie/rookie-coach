@@ -246,3 +246,35 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-008 checkpoint; use the Git commit containing this entry as its hash.
+
+## Run 2026-09-27 / RC-009
+Status: DONE
+Objective: Parse user-provided Codeforces source evidence from a synthetic local export.
+Started UTC: 2026-09-27T05:46:17Z
+
+Acceptance checks:
+- A sanitized export yields account-scoped available and explicitly unavailable source evidence with capture provenance.
+- Missing export entries leave metadata at not-collected; invalid or cross-account entries are rejected.
+- Targeted tests and package typechecks pass without a live Codeforces request.
+
+Changed:
+- `packages/codeforces/src/index.ts` — narrow source export parser returning source evidence without claiming an API response shape.
+- `fixtures/codeforces-user-source-export.json`, `packages/codeforces/src/index.test.ts` — invented source/status example and positive/negative checks.
+- `docs/source-export-v1.md` — local format, observation requirements and live-capture limit.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — complete RC-009 and activate RC-010.
+
+Verified:
+- `npm run typecheck` — PASS, core and Codeforces packages.
+- `npm test` — PASS, nine tests across two files.
+- `python3 -m json.tool fixtures/codeforces-user-source-export.json` — PASS.
+- `git diff --check` — PASS.
+
+Assumptions / decisions:
+- This JSON is a Rookie Coach user-prepared format, not an official Codeforces export. Only an observed access denial or absence may be marked unavailable; missing entries retain not-collected metadata status.
+- Live own-account `includeSources` payload and website automation remain unverified. No real student data, credentials, or network collection were used.
+
+Remaining / next:
+- RC-010 — fixture-backed explicit extension import and account-ID source merge, with separate metadata provenance.
+
+Commit:
+- This entry is committed with the RC-009 checkpoint; use the Git commit containing this entry as its hash.

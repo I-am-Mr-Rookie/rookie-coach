@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import page from "../../../fixtures/codeforces-user-status-page.json";
-import { backfillStatus, evidenceVersion, normalizeStatusPage } from "./index.js";
+import sourceExport from "../../../fixtures/codeforces-user-source-export.json";
+import { backfillStatus, evidenceVersion, normalizeStatusPage, parseUserSourceExport } from "./index.js";
 
 const account = { schemaVersion: 1, platform: "codeforces", namespace: "synthetic-student", handle: "fixture_learner" } as const;
 const capturedAt = "2023-11-15T00:00:00Z";
@@ -43,6 +44,34 @@ test("preserves missing optional fields and rejects unidentifiable or failed pag
     .toThrow("Call limit exceeded");
   expect(() => normalizeStatusPage({ status: "OK", result: [{ ...minimal.result[0], problem: { index: "A", name: "No key" } }] }, account, capturedAt))
     .toThrow("stable problem identity");
+});
+
+test("parses explicit user source evidence without guessing from metadata", () => {
+  const evidence = parseUserSourceExport(sourceExport, account, capturedAt);
+  expect(evidence).toEqual([
+    { ...account, submissionId: "900000002", source: "int main() { return 0; }\n",
+      sourceStatus: "available", captureMethod: "user-export",
+      provenance: "codeforces:user-provided-source-export", capturedAt },
+    { ...account, submissionId: "900000001", source: null,
+      sourceStatus: "unavailable", captureMethod: "user-export",
+      provenance: "codeforces:user-provided-source-export", capturedAt },
+  ]);
+  expect(normalizeStatusPage(page, account, capturedAt).map(({ sourceStatus }) => sourceStatus))
+    .toEqual(["not-collected", "not-collected"]);
+  expect(parseUserSourceExport({ ...sourceExport, submissions: [] }, account, capturedAt)).toEqual([]);
+});
+
+test("rejects ambiguous or cross-account source exports", () => {
+  expect(() => parseUserSourceExport(sourceExport, { ...account, namespace: "other" }, capturedAt))
+    .toThrow("account mismatch");
+  expect(() => parseUserSourceExport({ ...sourceExport, submissions: [sourceExport.submissions[0], sourceExport.submissions[0]] }, account, capturedAt))
+    .toThrow("duplicate");
+  expect(() => parseUserSourceExport({ ...sourceExport, submissions: [{ submissionId: "9", sourceStatus: "available", source: null }] }, account, capturedAt))
+    .toThrow("Invalid source evidence");
+  expect(() => parseUserSourceExport({ ...sourceExport, submissions: [{ submissionId: "9", sourceStatus: "unavailable", source: "hidden" }] }, account, capturedAt))
+    .toThrow("Invalid source evidence");
+  expect(() => parseUserSourceExport({ ...sourceExport, submissions: [{ submissionId: "9", sourceStatus: "not-collected", source: null }] }, account, capturedAt))
+    .toThrow("Invalid source evidence");
 });
 
 test("backfills multiple pages through an empty page, skipping repeated submission IDs", async () => {
