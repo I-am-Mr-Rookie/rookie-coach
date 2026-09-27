@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-011 — DONE (draft branch pending integration)
+Last run: RC-011 — DONE
 
 ## Milestone M0
 
@@ -26,12 +26,11 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 
 - Codeforces documents own-account API source inclusion, but the authenticated response shape and actual source coverage remain untested. Do not claim live source collection works.
 - No human-only blocker is active. Permanent license and later hosting choices are deferred.
-- RC-003 through RC-005 are integrated on `main`; the earlier stacked draft PRs are closed.
-- RC-010 is on draft PR #4 rather than `main` after automatic approval review rejected direct publication. RC-011 builds on that branch and remains pending integration too.
+- Completed checkpoints are recorded in Git history and the run log.
 
 ## Next
 
-RC-012: show the deterministic evidence in a simple local extension report, after integrating the RC-010/RC-011 draft chain. Stop after that bounded run.
+RC-012: show the deterministic evidence in a simple local extension report. Stop after that bounded run.
 
 ## Planned next milestone: local coaching pilot
 

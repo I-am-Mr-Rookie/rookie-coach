@@ -135,7 +135,7 @@ Acceptance: Compute and test at least: total attempts, accepted count, verdict d
 Out of scope: No personalized curriculum generator, no embeddings, no LLM calls.
 
 ## RC-012 Local first report
-Status: READY (on the RC-011 draft branch; integrate prerequisite drafts before mainline work)
+Status: READY
 Priority: P12
 Timebox: one run, <= 30 min
 Depends on: RC-011
