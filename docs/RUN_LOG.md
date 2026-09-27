@@ -312,3 +312,35 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-010 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-011
+Status: DONE
+Objective: Summarize one account's locally stored submissions into deterministic, evidence-only metrics.
+Started UTC: approximately 2026-09-27T06:17Z (first tool step; exact timestamp was not captured).
+
+Acceptance checks:
+- Account-scoped records yield stable total/accepted, verdict, language, source-status, difficulty and tag attempt counts, with per-problem ordered submissions and repeated-attempt counts.
+- Count only observed submissions before the first observed acceptance; use null when no acceptance appears. Do not infer topic weakness or unseen history.
+- Synthetic storage/summary tests and package typechecks pass.
+
+Changed:
+- `packages/core/src/summary.ts`, `packages/core/src/index.ts` — pure account-scoped summary and exported result type.
+- `packages/core/src/summary.test.ts` — shuffled store order, cross-account isolation, missing metadata, unaccepted/accepted problems, empty and invalid input.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — RC-011 checkpoint and RC-012 handoff.
+
+Verified:
+- `npm test` — PASS, 13 tests in four files.
+- `npm run typecheck` — PASS, core and Codeforces packages.
+- `git diff --check` — PASS.
+- Live import and browser report — not run; outside RC-011.
+
+Assumptions / decisions:
+- Difficulty and tag counts are counts of submissions with that metadata, not unique problems or claims of weakness.
+- Time and submission ID break attempt-order ties. Counts before acceptance describe observed records only; a one-page import may omit earlier attempts.
+- RC-010 is an unmerged draft PR #4 because direct main publication was rejected by automatic approval review. This run builds on its branch and must not bypass that review boundary.
+
+Remaining / next:
+- Integrate the draft chain when approved; RC-012 then renders a local report using this summary. No next run started here.
+
+Commit:
+- This entry is committed with the RC-011 checkpoint; use the Git commit containing it as its hash.

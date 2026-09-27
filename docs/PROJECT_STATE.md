@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-010 — DONE
+Last run: RC-011 — DONE (draft branch pending integration)
 
 ## Milestone M0
 
@@ -20,16 +20,18 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 - RC-008 added account-isolated local evidence stores in the core package: IndexedDB for the extension and an in-memory implementation for deterministic tests. Upserts and source/provenance round trips pass against both.
 - RC-009 parses an invented, user-prepared source export into account-scoped source evidence, rejecting mismatches and contradictory statuses. The [format](source-export-v1.md) does not capture live source.
 - RC-010 connects the explicit popup action to a user-selected Codeforces `user.status` JSON page and optional matching source export. It validates before writing, merges source by account and submission ID, preserves separate metadata/source provenance, and stores locally in IndexedDB. The synthetic popup import and failure path pass; no live website request is made.
+- RC-011 summarizes one account's stored evidence deterministically: attempt/acceptance counts, verdict, language and source coverage, ordered problem attempts, observed attempts before first acceptance, and difficulty/tag frequencies. These are observations over imported records, not weakness diagnoses; partial imports can omit earlier attempts.
 
 ## Known gaps and blockers
 
 - Codeforces documents own-account API source inclusion, but the authenticated response shape and actual source coverage remain untested. Do not claim live source collection works.
 - No human-only blocker is active. Permanent license and later hosting choices are deferred.
 - RC-003 through RC-005 are integrated on `main`; the earlier stacked draft PRs are closed.
+- RC-010 is on draft PR #4 rather than `main` after automatic approval review rejected direct publication. RC-011 builds on that branch and remains pending integration too.
 
 ## Next
 
-RC-011: compute the deterministic evidence summary from locally stored submissions. Stop after that bounded run.
+RC-012: show the deterministic evidence in a simple local extension report, after integrating the RC-010/RC-011 draft chain. Stop after that bounded run.
 
 ## Planned next milestone: local coaching pilot
 

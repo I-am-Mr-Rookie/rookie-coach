@@ -35,3 +35,4 @@ export interface Submission extends StudentAccount {
 }
 
 export { IndexedDbEvidenceStore, MemoryEvidenceStore, type EvidenceStore } from "./storage.js";
+export { summarizeEvidence, type EvidenceSummary } from "./summary.js";
