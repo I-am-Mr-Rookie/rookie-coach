@@ -344,3 +344,37 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-011 checkpoint; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-012
+Status: DONE
+Objective: Render one configured student's locally stored evidence in a simple extension report.
+Started UTC: 2026-09-27T06:34Z (first tool step; exact second not captured).
+
+Acceptance checks:
+- Display account-scoped observed counts, repeated problems, verdict patterns, and source coverage locally.
+- Label partial history and missing source without inferring causes or weaknesses.
+- Pass a synthetic import-to-report check and document a manual browser demo.
+
+Changed:
+- `extension/report.html`, `extension/report.ts`, `extension/popup.html` — local report page and popup link using the RC-011 summary.
+- `package.json`, `extension/tsconfig.json`, `scripts/check-extension.mjs` — build both extension pages and verify a synthetic import-to-report flow in fake IndexedDB.
+- `README.md` — manual load and fixture demo path.
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md`, `docs/RUN_LOG.md` — complete RC-012 and activate RC-013.
+
+Verified:
+- `npm run build:extension` — PASS, TypeScript, both browser bundles, synthetic popup import and report rendering.
+- `npm run typecheck` — PASS, core and Codeforces packages.
+- `npm test` — PASS, 13 tests in four files.
+- `python3 scripts/check-evidence-fixture.py` — PASS.
+- `git diff --check` — PASS.
+- Manual Chrome load — not run; Chrome/Chromium unavailable in this environment.
+
+Assumptions / decisions:
+- The popup opens an extension-local page for the last saved handle. It reads only that account's IndexedDB records and never sends them to a server.
+- A selected metadata page may omit earlier attempts; all report counts are observed imported records. Missing source is separated into not-collected and unavailable evidence.
+
+Remaining / next:
+- RC-013 — M0 integration and coaching readiness review. Live collection and authenticated source behavior remain unverified.
+
+Commit:
+- This entry is committed with the RC-012 checkpoint; use the Git commit containing it as its hash.

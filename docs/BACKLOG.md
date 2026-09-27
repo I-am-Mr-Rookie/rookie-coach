@@ -135,7 +135,7 @@ Acceptance: Compute and test at least: total attempts, accepted count, verdict d
 Out of scope: No personalized curriculum generator, no embeddings, no LLM calls.
 
 ## RC-012 Local first report
-Status: READY
+Status: DONE
 Priority: P12
 Timebox: one run, <= 30 min
 Depends on: RC-011
@@ -161,7 +161,7 @@ Planning update: 2026-09-27. These are future instructions, not completed runs. 
 - A repeated verdict or tag does not establish a programming misconception. State observations, hypotheses and unavailable evidence honestly. A rule must abstain when its required evidence is missing. Do not treat passing fixtures as live validation or pilot ratings as proof of learning improvement.
 
 ## RC-013 M0 integration and coaching readiness review
-Status: WAITING
+Status: READY
 Priority: P13
 Timebox: one run, <= 30 min
 Depends on: RC-012

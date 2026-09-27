@@ -13,6 +13,10 @@ const popup = readFileSync(new URL(manifest.action.default_popup, root), "utf8")
 const script = popup.match(/<script type="module" src="([^"]+)"/);
 assert.ok(script, "popup needs a module script");
 assert.ok(existsSync(new URL(script[1], root)), "compiled popup script is missing");
+const reportHtml = readFileSync(new URL("report.html", root), "utf8");
+const reportScript = reportHtml.match(/<script type="module" src="([^"]+)"/);
+assert.ok(reportScript, "report needs a module script");
+assert.ok(existsSync(new URL(reportScript[1], root)), "compiled report script is missing");
 
 const saved = new Map([["codeforcesHandle", "ExistingHandle"]]);
 const input = { value: "" };
@@ -66,4 +70,20 @@ metadata.files = [{ text: async () => '{' }];
 await submit({ preventDefault() {} });
 assert.match(status.textContent, /Import failed:/);
 assert.equal(button.disabled, false);
-console.log("MV3 popup synthetic import to IndexedDB: PASS");
+const nodes = Object.fromEntries(["#status", "#report", "#overview", "#repeats", "#verdicts", "#languages", "#coverage", "#difficulties", "#tags"]
+  .map((selector) => [selector, { textContent: "", hidden: true, children: [], replaceChildren(...children) { this.children = children; } }]));
+runInNewContext(readFileSync(new URL(reportScript[1], root), "utf8"), {
+  document: { querySelector: (selector) => nodes[selector], createElement: () => ({ textContent: "" }) },
+  indexedDB,
+  localStorage: { getItem: (key) => saved.get(key) ?? null },
+});
+for (let attempt = 0; nodes["#report"].hidden && attempt < 20; attempt++) {
+  await new Promise((resolve) => setTimeout(resolve, 0));
+}
+assert.equal(nodes["#report"].hidden, false);
+assert.match(nodes["#overview"].textContent, /2 observed attempts; 1 accepted/);
+assert.match(nodes["#overview"].textContent, /1 without source text/);
+assert.match(nodes["#repeats"].children[0].textContent, /1 observed before first acceptance/);
+assert.deepEqual(nodes["#coverage"].children.map((item) => item.textContent), ["available: 1", "unavailable: 1"]);
+assert.match(nodes["#verdicts"].children[1].textContent, /WRONG_ANSWER: 1/);
+console.log("MV3 popup import and local report with synthetic IndexedDB evidence: PASS");

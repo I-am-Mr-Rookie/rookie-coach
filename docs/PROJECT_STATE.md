@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-011 — DONE
+Last run: RC-012 — DONE
 
 ## Milestone M0
 
@@ -21,17 +21,19 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 - RC-009 parses an invented, user-prepared source export into account-scoped source evidence, rejecting mismatches and contradictory statuses. The [format](source-export-v1.md) does not capture live source.
 - RC-010 connects the explicit popup action to a user-selected Codeforces `user.status` JSON page and optional matching source export. It validates before writing, merges source by account and submission ID, preserves separate metadata/source provenance, and stores locally in IndexedDB. The synthetic popup import and failure path pass; no live website request is made.
 - RC-011 summarizes one account's stored evidence deterministically: attempt/acceptance counts, verdict, language and source coverage, ordered problem attempts, observed attempts before first acceptance, and difficulty/tag frequencies. These are observations over imported records, not weakness diagnoses; partial imports can omit earlier attempts.
+- RC-012 adds a local extension report for the configured handle with observed repeated attempts, verdict and language counts, source coverage, and available difficulty/tag metadata. The synthetic popup-to-report check passes; the README documents a manual browser demo.
 
 ## Known gaps and blockers
 
 - Codeforces documents own-account API source inclusion, but the authenticated response shape and actual source coverage remain untested. Do not claim live source collection works.
+- A real browser load and student import have not been checked; synthetic IndexedDB and fixture checks cover the report path.
 - No human-only blocker is active. Permanent license and later hosting choices are deferred.
 - Completed checkpoints are recorded in Git history and the run log.
 
 ## Next
 
-RC-012: show the deterministic evidence in a simple local extension report. Stop after that bounded run.
+RC-013: review M0 integration and coaching readiness using the documented synthetic demo. Stop after that bounded run.
 
 ## Planned next milestone: local coaching pilot
 
-After RC-012, follow [RC-013 through RC-020](BACKLOG.md#post-m0-pilot) to prepare one conservative recurring-mistake diagnosis and one practice action. RC-021 reviews real feedback when available. The owner can recruit five volunteers; individual consent and live validation are still required. This independent project has no supplied university evaluation requirement. These future tasks are WAITING and do not change the current M0 queue.
+Follow [RC-013 through RC-020](BACKLOG.md#post-m0-pilot) to prepare one conservative recurring-mistake diagnosis and one practice action. RC-021 reviews real feedback when available. The owner can recruit five volunteers; individual consent and live validation are still required. This independent project has no supplied university evaluation requirement. RC-013 is READY; later tasks remain WAITING.
