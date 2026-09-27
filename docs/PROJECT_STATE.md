@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-014 — DONE
+Last run: RC-021 — BLOCKED
 
 ## Milestone M0
 
@@ -40,8 +40,10 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 
 ## Next
 
-RC-014 is complete for its bounded metadata import and source-availability check. The live sample contains no imported source, so the source-dependent coaching rule cannot be validated from it. Pilot readiness still requires suitable source coverage, real-browser data-control checks and individual consent. RC-021 remains WAITING for actual permitted feedback; no further run is activated here.
+RC-021 is BLOCKED: no actual feedback with evaluation permission was supplied for the requested review. Resume RC-021 when the owner makes permitted feedback available privately and confirms the [pilot readiness gates](pilot-guide.md#readiness-gates); record public-aggregate permission separately. Review the actual sample even if fewer than five respond. Do not invent responses or select an evidence-based successor without evidence.
+
+RC-014 remains complete for its bounded metadata import and source-availability check; it was not rerun. The live sample contains no imported source, so the source-dependent coaching rule cannot be validated from it. Suitable source coverage, real-browser data-control checks and individual consent remain separate pilot gates.
 
 ## Planned next milestone: local coaching pilot
 
-RC-013 is RESEARCH_COMPLETE; RC-014 through RC-020 are DONE. The [pilot guide](pilot-guide.md) prepares a local five-volunteer exercise, but the owner has not recruited or enrolled anyone. RC-014's one-page metadata check is complete; source-dependent live coaching and pilot controls remain unverified. RC-021 is WAITING for real, permitted feedback. This independent project has no supplied university evaluation requirement.
+RC-013 is RESEARCH_COMPLETE; RC-014 through RC-020 are DONE. The [pilot guide](pilot-guide.md) prepares a local five-volunteer exercise, but no enrollment or feedback has been supplied for review. RC-014's one-page metadata check is complete; source-dependent live coaching and pilot controls remain unverified. RC-021 is BLOCKED pending its activation evidence. This independent project has no supplied university evaluation requirement.

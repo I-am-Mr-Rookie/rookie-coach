@@ -714,3 +714,38 @@ Remaining / next:
 
 Commit:
 - This entry is committed with the RC-014 closeout; use the Git commit containing it as its hash.
+
+## Run 2026-09-27 / RC-021
+Status: BLOCKED
+Objective: Check whether the requested pilot feedback review can activate and leave a findings-free checkpoint when its evidence is unavailable.
+Started UTC: approximately 2026-09-27T15:35:25Z; first captured shell clock 15:35:53Z.
+
+Acceptance checks (recorded in scratch before edits):
+1. Confirm current GitHub prerequisites and activation evidence; preserve RC-014's existing completion and never substitute fixtures for feedback.
+2. Record the blocker and one precise resume condition consistently, without invented results or a speculative successor.
+3. Validate documentation consistency and links, review the public diff for private material, and pass `git diff --check` before publishing the checkpoint.
+
+Changed:
+- `docs/PROJECT_STATE.md`, `docs/BACKLOG.md` — record RC-021 BLOCKED and its resume conditions.
+- `docs/RUN_LOG.md` — record this activation check. No application code or feedback artifact was added.
+
+Verified:
+- Fresh GitHub connector reads and clone agree on the current control files; local base is `810046813bd5ad02fd2298aa5054bb4719953564`. `git status --short` was clean before editing. GitHub open-PR search returned no open PRs.
+- Read AGENTS, the overview run system, state, backlog, decisions, recent run log and pilot guide. RC-014 and RC-020 are DONE; RC-021's actual-feedback and readiness activation conditions are not established. No READY task exists.
+- Inline Python documentation check — PASS: RC-021 BLOCKED, RC-014/020 DONE, no READY tasks, relative file targets exist, readiness anchor exists.
+- `git diff --check` — PASS. Diff review: only public operational documentation; no private records, identifiers, source, individual feedback or credentials.
+- Application tests/build were not rerun because no application behavior changed. Pilot feedback counts and findings cannot be verified without the permitted input.
+
+Assumptions / decisions:
+- The user's deferral of run 14 is respected by leaving its newer GitHub closeout unchanged and performing no live import.
+- The RC-021 fallback takes precedence over inventing a task: no participant feedback was provided in this session or identified in the current control files. This is not a claim that no feedback exists elsewhere.
+- No volunteer was contacted or enrolled. No synthetic response was counted. No repair, new rule or further-evaluation task was ranked without actual observations.
+
+Remaining / next:
+- Resume RC-021 only when its activation evidence is available; do not start another run here.
+
+Blocker:
+- Owner must make actual feedback available privately with permission for evaluation and confirm the pilot guide's readiness gates. Public-aggregate permission is separate; without it, keep public checkpoints findings-free. Fewer than five responses are acceptable with the actual denominator and limitations.
+
+Commit:
+- This entry is committed with the RC-021 blocked checkpoint; use the Git commit containing it as its hash.

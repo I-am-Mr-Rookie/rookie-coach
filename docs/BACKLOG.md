@@ -321,11 +321,13 @@ Fallback / checkpoint: If installation or the live coverage gate fails, preserve
 Out of scope: No contacting students, collecting real feedback automatically, paid hosting, formal university study or permanent license selection.
 
 ## RC-021 Pilot feedback review
-Status: WAITING
+Status: BLOCKED
 Priority: P21
 Timebox: one run, <= 30 min
 Depends on: RC-014, RC-020
 Activation: Actual feedback is available with permission to use it for evaluation, and pilot readiness gates are satisfied. Target five volunteers; report the actual respondent count without inventing missing responses.
+
+Checkpoint (2026-09-27): Requested review cannot activate: no actual permitted feedback was supplied, and the [pilot guide](pilot-guide.md#readiness-gates) still records missing source coverage and real-browser control verification. RC-014 and RC-020 are complete; their completion does not satisfy these separate gates. Resume when the owner provides private access to permitted feedback and confirmation of readiness, with public-aggregate permission stated separately. No respondent count, findings or next implementation task can be inferred yet.
 
 Goal: Decide the smallest next improvement from the pilot's real observations.
 
