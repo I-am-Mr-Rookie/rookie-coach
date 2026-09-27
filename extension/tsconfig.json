@@ -1,4 +1,4 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["popup.ts", "import.ts"]
+  "include": ["popup.ts", "import.ts", "report.ts"]
 }
