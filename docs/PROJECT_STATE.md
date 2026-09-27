@@ -1,7 +1,7 @@
 # Project State
 
 Updated: 2026-09-27
-Last run: RC-019 — DONE
+Last run: RC-020 — DONE
 
 ## Milestone M0
 
@@ -28,19 +28,20 @@ Prove a local Codeforces evidence pipeline for one student: authorized historica
 - RC-017 maps that supported finding to one deterministic, self-contained array-index tracing exercise with a checkable finish. Unknown rules and insufficient evidence produce no action.
 - RC-018 displays the candidate finding, supporting submission IDs and origins, inert local source text, and the one exercise in the existing report. It distinguishes insufficient evidence from no supported pattern; synthetic finding, missing-source, no-match, empty-account and untrusted-text checks pass.
 - RC-019 adds a per-account version 1 JSON evidence download and confirmed local deletion. The selected account's records remain gone after reopening IndexedDB; other accounts stay intact. Clearing its saved handle refreshes an open report. Import remains an explicit local file action with no background collection.
+- RC-020 adds a [synthetic pilot guide](pilot-guide.md) with local rehearsal, individual import and feedback permission, a short feedback form, and explicit live/source/browser readiness gates. The synthetic build flow passed; no real pilot has launched.
 
 ## Known gaps and blockers
 
 - Codeforces documents own-account API source inclusion, but the authenticated response shape and actual source coverage remain untested. Do not claim live source collection works.
-- A real browser load and student import have not been checked; synthetic IndexedDB and fixture checks cover the report path, coaching states and local data controls.
+- A real browser load and student import have not been checked; synthetic IndexedDB and fixture checks cover the report path, coaching states and local data controls. The pilot is not ready until RC-014, suitable real source coverage, browser controls and individual consent are checked.
 - The popup imports one selected JSON page, not live or full history. Exported JSON can include private source/history; deletion cannot remove original files or prior downloads. The recurring-edit rule remains a candidate, not a validated explanation. No synthetic integration repair was required in RC-013.
-- No human-only blocker is active. Permanent license and later hosting choices are deferred.
+- RC-014 awaits individual permission and a local live check; this did not block RC-020 preparation. Permanent license and later hosting choices are deferred.
 - Completed checkpoints are recorded in Git history and the run log.
 
 ## Next
 
-RC-020: prepare a synthetic dry-run pilot guide. RC-014 remains WAITING for one student's explicit permission and local live check; real pilot readiness still depends on that separate check. Stop after this bounded run.
+RC-014 remains WAITING for one student's explicit permission and local live check; the owner will do it later. RC-021 remains WAITING for RC-014, pilot readiness and actual permitted feedback. No further run is activated here.
 
 ## Planned next milestone: local coaching pilot
 
-Follow [RC-013 through RC-020](BACKLOG.md#post-m0-pilot) to prepare one conservative recurring-mistake diagnosis and one practice action. RC-021 reviews real feedback when available. The owner can recruit five volunteers; individual consent and live validation are still required. This independent project has no supplied university evaluation requirement. RC-013 is RESEARCH_COMPLETE, RC-015 through RC-019 are DONE, RC-020 is READY, and RC-014 remains WAITING for authorization.
+RC-013 is RESEARCH_COMPLETE; RC-015 through RC-020 are DONE. The [pilot guide](pilot-guide.md) prepares a local five-volunteer exercise, but the owner has not recruited or enrolled anyone. RC-014 is WAITING for an authorized live check and RC-021 is WAITING for real, permitted feedback. This independent project has no supplied university evaluation requirement.
